@@ -1,0 +1,110 @@
+﻿<UserControl x:Class="VikingLogixUtility.Views.UDT.UdtOptions"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:VikingLogixUtility.Views.UDT"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="VerticalAlignment" Value="Top"/>
+        </Style>
+        <Style TargetType="{x:Type GroupBox}">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="5px"/>
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <GroupBox
+            Header="Scope"
+            Grid.Row="0"
+            Grid.Column="0">
+            <ListBox
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding IsNotRunning}"
+                ItemsSource="{Binding ScopeItems}"
+                SelectedItem="{Binding ScopeSelectedItem}"
+                SelectionChanged="ScopeItems_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <GroupBox
+            Header="UDT"
+            Grid.Row="0"
+            Grid.Column="1">
+            <ListBox
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                IsEnabled="{Binding IsNotRunning}"
+                ItemsSource="{Binding UdtItems}"
+                SelectedItem="{Binding UdtSelectedItem}"
+                SelectionChanged="UdtItems_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <GroupBox
+            Header="Parameters"
+            Grid.Row="0"
+            Grid.Column="2">
+            <ListBox
+                VerticalAlignment="Stretch"
+                HorizontalAlignment="Stretch"
+                Name="ParameterItems"
+                IsEnabled="{Binding IsNotRunning}"
+                ItemsSource="{Binding ParameterItems}"
+                SelectionMode="Multiple"
+                SelectionChanged="ParameterItems_SelectionChanged">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding DisplayName}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <GroupBox
+            Header="Tag Name Filter"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
+            <TextBox
+                HorizontalAlignment="Left"
+                Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
+                TextChanged="FilterText_TextChanged"
+                Width="200px">
+            </TextBox>
+        </GroupBox>
+        <GroupBox
+            Grid.Row="1"
+            Grid.Column="2">
+            <StackPanel
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    Click="SelectAllButton_Click"
+                    Content="Select All"/>
+                <Button
+                    Click="SelectNoneButton_Click"
+                    Content="Select None"/>
+            </StackPanel>
+        </GroupBox>
+    </Grid>
+</UserControl>

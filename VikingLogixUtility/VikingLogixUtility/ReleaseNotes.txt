@@ -1,0 +1,10 @@
+﻿*******************************************************************************
+                        Viking Logix Utility Release Notes
+
+Techneaux Industrial Control Systems
+Initial Release: 1/9/2025
+
+*******************************************************************************
+
+Version 1.0.0, 1/9/2025, C. Dupre
+- Initial release.
