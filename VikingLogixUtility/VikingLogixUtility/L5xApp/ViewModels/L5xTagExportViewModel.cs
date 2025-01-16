@@ -2,12 +2,12 @@
 using System.IO;
 using System.Windows.Input;
 using VikingLogixUtility.Bases;
-using VikingLogixUtility.Interfaces;
 using VikingLogixUtility.L5xApp.Commands;
+using VikingLogixUtility.L5xApp.Interfaces;
 
 namespace VikingLogixUtility.L5xApp.ViewModels
 {
-    internal sealed class L5xTagExportViewModel : BaseNotifyPropertyChanged, ILoggable
+    internal sealed class L5xTagExportViewModel : BaseNotifyPropertyChanged, ITagExportViewModel
     {
         private const short MaxWarning = 10;
 

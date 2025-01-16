@@ -1,11 +1,12 @@
 ﻿using L5Sharp.Core;
+using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.ViewModels;
 
 namespace VikingLogixUtility.L5xApp.Processors
 {
     internal static class ScopeLoader
     {
-        public static void Geaux(L5xTagExportViewModel viewModel)
+        public static void Geaux(ITagExportViewModel viewModel)
         {
             viewModel.Log($"Loading {viewModel.L5XFilename}...");
 

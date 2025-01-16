@@ -1,9 +1,9 @@
 ﻿using VikingLogixUtility.Bases;
-using VikingLogixUtility.L5xApp.ViewModels;
+using VikingLogixUtility.L5xApp.Interfaces;
 
 namespace VikingLogixUtility.L5xApp.Commands
 {
-    internal class SelectScopesCommand(L5xTagExportViewModel viewModel) : BaseCommand
+    internal class SelectScopesCommand(ITagExportViewModel viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {

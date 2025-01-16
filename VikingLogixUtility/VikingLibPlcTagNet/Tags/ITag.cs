@@ -11,8 +11,8 @@ namespace VikingLibPlcTagNet.Tags
         string? PreviousValue { get; }
         bool Changed { get; }
 
-        void Write (string value);
-        void Read ();
-        void Toggle ();
+        void Write(string value);
+        void Read();
+        void Toggle();
     }
 }

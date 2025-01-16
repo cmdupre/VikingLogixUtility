@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VikingLibPlcTagNet", "Vikin
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "VikingLogixUtilitySetup", "VikingLogixUtilitySetup\VikingLogixUtilitySetup.vdproj", "{682EFE7D-5D8F-4C9D-9311-7AC5064E7BA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VikingLogixUtilityTests", "VikingLogixUtilityTests\VikingLogixUtilityTests.csproj", "{A7F92678-D0B4-45A4-92CC-29B0306D2FE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VikingLibPlcTagNetTests", "VikingLibPlcTagNetTests\VikingLibPlcTagNetTests.csproj", "{D10E8FCA-FC24-4305-A870-7CDB76B66527}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +29,14 @@ Global
 		{7858354C-1030-4B69-8638-9D6B67BE3D59}.Release|Any CPU.Build.0 = Release|Any CPU
 		{682EFE7D-5D8F-4C9D-9311-7AC5064E7BA1}.Debug|Any CPU.ActiveCfg = Debug
 		{682EFE7D-5D8F-4C9D-9311-7AC5064E7BA1}.Release|Any CPU.ActiveCfg = Release
+		{A7F92678-D0B4-45A4-92CC-29B0306D2FE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7F92678-D0B4-45A4-92CC-29B0306D2FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7F92678-D0B4-45A4-92CC-29B0306D2FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7F92678-D0B4-45A4-92CC-29B0306D2FE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D10E8FCA-FC24-4305-A870-7CDB76B66527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D10E8FCA-FC24-4305-A870-7CDB76B66527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D10E8FCA-FC24-4305-A870-7CDB76B66527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D10E8FCA-FC24-4305-A870-7CDB76B66527}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

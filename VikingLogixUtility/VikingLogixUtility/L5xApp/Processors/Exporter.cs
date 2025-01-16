@@ -3,14 +3,14 @@ using L5Sharp.Core;
 using System.Data;
 using VikingLogixUtility.Common;
 using VikingLogixUtility.Extensions;
-using VikingLogixUtility.L5xApp.ViewModels;
 using VikingLogixUtility.L5xApp.Models;
+using VikingLogixUtility.L5xApp.Interfaces;
 
 namespace VikingLogixUtility.L5xApp.Processors
 {
     internal static class Exporter
     {
-        public static void Geaux(L5xTagExportViewModel viewModel)
+        public static void Geaux(ITagExportViewModel viewModel)
         {
             viewModel.Log($"Exporting to {viewModel.L5XFilename.WithXlsxExtension()}...");
 

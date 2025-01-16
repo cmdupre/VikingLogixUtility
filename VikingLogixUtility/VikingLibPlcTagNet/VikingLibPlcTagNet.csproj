@@ -11,4 +11,8 @@
     <PackageReference Include="libplctag.NativeImport" Version="1.0.41" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="VikingLibPlcTagNetTests" />
+	</ItemGroup>
+
 </Project>

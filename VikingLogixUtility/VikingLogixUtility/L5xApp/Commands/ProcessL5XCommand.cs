@@ -1,11 +1,11 @@
 ﻿using Microsoft.Win32;
 using VikingLogixUtility.Bases;
+using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.Processors;
-using VikingLogixUtility.L5xApp.ViewModels;
 
 namespace VikingLogixUtility.L5xApp.Commands
 {
-    internal sealed class ProcessL5XCommand(L5xTagExportViewModel viewModel) : BaseCommand
+    internal sealed class ProcessL5XCommand(ITagExportViewModel viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {

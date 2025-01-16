@@ -26,6 +26,10 @@
     <ProjectReference Include="..\VikingLibPlcTagNet\VikingLibPlcTagNet.csproj" />
   </ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="VikingLogixUtilityTests" />
+	</ItemGroup>
+
   <ItemGroup>
     <None Update="ReleaseNotes.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

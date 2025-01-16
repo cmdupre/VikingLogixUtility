@@ -14,11 +14,11 @@ namespace VikingLogixUtility.Models
         private static Settings Default => 
             new(string.Empty);
 
-        public static Settings Load()
+        public static Settings Load(string? filename = null)
         {
             try
             {
-                var json = File.ReadAllText(Filename);
+                var json = File.ReadAllText(filename ?? Filename);
 
                 return JsonSerializer.Deserialize<Settings>(json) ?? Default;
             }
@@ -30,11 +30,11 @@ namespace VikingLogixUtility.Models
             return Default;
         }
 
-        public void Write()
+        public void Write(string? filename = null)
         {
             var json = JsonSerializer.Serialize(this);
 
-            File.WriteAllText(Filename, json);
+            File.WriteAllText(filename ?? Filename, json);
         }
 
         public string Address => address;

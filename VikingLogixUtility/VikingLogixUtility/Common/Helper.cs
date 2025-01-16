@@ -48,7 +48,7 @@ namespace VikingLogixUtility.Common
             .Select(r => r.Text.ToString())
             .Where(t => RegularExpressions.MappingFilter().IsMatch(t));
 
-        public static  void AddTagEditorHeaders(DataGrid? dataGrid, IEnumerable<RowViewModel> rows)
+        public static void AddTagEditorHeaders(DataGrid? dataGrid, IEnumerable<RowViewModel> rows)
         {
             if (dataGrid is null)
                 return;

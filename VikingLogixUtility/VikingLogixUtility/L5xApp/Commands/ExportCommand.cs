@@ -1,10 +1,10 @@
 ﻿using VikingLogixUtility.Bases;
+using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.Processors;
-using VikingLogixUtility.L5xApp.ViewModels;
 
 namespace VikingLogixUtility.L5xApp.Commands
 {
-    internal sealed class ExportCommand(L5xTagExportViewModel viewModel) : BaseCommand
+    internal sealed class ExportCommand(ITagExportViewModel viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {

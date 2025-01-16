@@ -1,15 +1,15 @@
 ﻿using L5Sharp.Core;
 using System.Data;
 using VikingLogixUtility.L5xApp.RegEx;
-using VikingLogixUtility.L5xApp.ViewModels;
 using VikingLogixUtility.L5xApp.Models;
+using VikingLogixUtility.L5xApp.Interfaces;
 
 namespace VikingLogixUtility.L5xApp.Processors
 {
     internal static partial class TagWriter
     {
         public static void Geaux(
-            L5xTagExportViewModel viewModel,
+            ITagExportViewModel viewModel,
             ExportTable table,
             IEnumerable<string> mapping,
             string scope,
@@ -45,7 +45,7 @@ namespace VikingLogixUtility.L5xApp.Processors
                 {
                     table.AddRow(scope, tag.Name, tag.TagType, tag.AliasFor, tag.DataType, string.Empty,
                         tag.Description, string.Empty, address);
-                    
+
                     continue;
                 }
 
