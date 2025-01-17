@@ -26,7 +26,6 @@ namespace VikingLogixUtility.ViewModels
         private ObservableCollection<RowViewModel> savedRows = [];
         private string filterText = string.Empty;
 
-        // TODO: this is not being called on application exit.
         public void Dispose() => plcInfo?.Dispose();
 
         public PdtTabViewModel()
