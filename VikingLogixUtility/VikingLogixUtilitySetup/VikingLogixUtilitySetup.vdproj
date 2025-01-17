@@ -43,6 +43,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -59,6 +67,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -177,15 +193,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Viking Logix Utility"
-        "ProductCode" = "8:{995A8249-EDD9-4D5C-8DB9-20D58B3EB707}"
-        "PackageCode" = "8:{A354B2D9-EBD5-43A5-A578-EC3F6273D418}"
+        "ProductCode" = "8:{318091DA-8007-427D-9C93-999D2506E503}"
+        "PackageCode" = "8:{551E7C48-ACAF-412A-93F4-C4B8AF5ABDF3}"
         "UpgradeCode" = "8:{74AF0993-B619-4427-BE81-C1C0F6C9D471}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0.0"
+        "ProductVersion" = "8:1.1.0"
         "Manufacturer" = "8:Techneaux ICS"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -727,7 +743,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_3345419415C14BF493713F4D300CAC8A"
             {
-            "SourcePath" = "8:..\\VikingLogixUtility\\obj\\Release\\net8.0-windows\\apphost.exe"
+            "SourcePath" = "8:..\\VikingLogixUtility\\obj\\Debug\\net8.0-windows\\apphost.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_31366D88178B4553A45D0BBF113DE1FC"
