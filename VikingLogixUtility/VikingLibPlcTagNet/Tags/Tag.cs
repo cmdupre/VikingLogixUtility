@@ -110,6 +110,7 @@ namespace VikingLibPlcTagNet.Tags
             else if (typeof(T) == typeof(DateTime))
                 plctag.plc_tag_set_int32(Id, 0, Int32.Parse(value));
 
+            // TODO: allow strings.
             //else if (typeof(T) == typeof(string))
             //    plctag.plc_tag_set_string(Id, 0, value);
 
@@ -175,6 +176,7 @@ namespace VikingLibPlcTagNet.Tags
             if (typeof(T) == typeof(DateTime))
                 return plctag.plc_tag_get_int32(id, 0).ToString();
 
+            // TODO: allow strings.
             // STRING is a UDT
             //if (typeof(T) == typeof(string))
             //{

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using VikingLibPlcTagNet.Data;
 using VikingLibPlcTagNet.Settings;
+using VikingLibPlcTagNet.Tags;
 using VikingLogixUtility.Bases;
 using VikingLogixUtility.Commands;
 using VikingLogixUtility.Common;
@@ -313,6 +314,9 @@ namespace VikingLogixUtility.ViewModels
                     Log($"Unable to read tag {tagName}.");
                     continue;
                 }
+
+                if (tag is TagReadonly)
+                    continue;
 
                 var cells = new List<CellViewModel>()
                 {

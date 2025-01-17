@@ -85,8 +85,9 @@ namespace VikingLibPlcTagNet.Data
                 
                 tagInfos.Add(tagInfo);
 
+                // TODO: allow strings.
                 // Save template ids for further processing.
-                if (tagInfo.IsUdt)
+                if (tagInfo.IsUdt && tagInfo.Type != DataTypes.STRING)
                     templateIds.Add(tagInfo.TemplateId);
             }
 

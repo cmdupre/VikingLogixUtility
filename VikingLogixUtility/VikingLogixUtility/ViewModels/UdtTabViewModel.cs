@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using VikingLibPlcTagNet.Data;
 using VikingLibPlcTagNet.Settings;
+using VikingLibPlcTagNet.Tags;
 using VikingLogixUtility.Bases;
 using VikingLogixUtility.Commands;
 using VikingLogixUtility.Common;
@@ -416,6 +417,9 @@ namespace VikingLogixUtility.ViewModels
                         ScopeSelectedItem.Name, tagName, UdtSelectedItem.Name, parameterSelectedItem.Name);
 
                     if (tag is null)
+                        continue;
+
+                    if (tag is TagReadonly)
                         continue;
 
                     cells.Add(new(parameterSelectedItem.Name, tag.Value!, string.Empty));
