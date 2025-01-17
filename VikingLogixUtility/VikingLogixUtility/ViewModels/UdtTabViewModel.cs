@@ -412,13 +412,13 @@ namespace VikingLogixUtility.ViewModels
 
                 foreach (var parameterSelectedItem in ParameterSelectedItems)
                 {
-                    var tagValue = plcInfo.GetTagValue(
+                    var tag = plcInfo.GetTag(
                         ScopeSelectedItem.Name, tagName, UdtSelectedItem.Name, parameterSelectedItem.Name);
 
-                    if (tagValue is null)
+                    if (tag is null)
                         continue;
 
-                    cells.Add(new(parameterSelectedItem.Name, tagValue, string.Empty));
+                    cells.Add(new(parameterSelectedItem.Name, tag.Value!, string.Empty));
                 }
 
                 if (cells.Count < 2)
@@ -478,7 +478,8 @@ namespace VikingLogixUtility.ViewModels
                     if (string.IsNullOrWhiteSpace(writeValueString))
                         continue;
 
-                    plcInfo.WriteTagValue(ScopeSelectedItem.Name, tagName, writeValueString, UdtSelectedItem.Name, property.Name);
+                    plcInfo.GetTag(ScopeSelectedItem.Name, tagName, UdtSelectedItem.Name, property.Name)?
+                        .Write(writeValueString);
                 }
             }
         }

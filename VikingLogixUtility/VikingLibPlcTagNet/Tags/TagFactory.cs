@@ -24,6 +24,7 @@ namespace VikingLibPlcTagNet.Tags
                 DataTypes.ULINT => Tag<ulong>.Create(path, fqn),
                 DataTypes.REAL => Tag<float>.Create(path, fqn),
                 DataTypes.LREAL => Tag<double>.Create(path, fqn),
+                DataTypes.TIME => Tag<DateTime>.Create(path,fqn),
                 DataTypes.STRING => Tag<string>.Create(path, fqn),
                 _ => TagReadonly.Create(path, fqn),
             };

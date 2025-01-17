@@ -77,9 +77,6 @@ namespace VikingLibPlcTagNet.Tags
             if (typeof(T) == typeof(bool))
                 plctag.plc_tag_set_bit(Id, 0, Int32.Parse(value));
 
-            else if (typeof(T) == typeof(float))
-                plctag.plc_tag_set_float32(Id, 0, Single.Parse(value));
-
             else if (typeof(T) == typeof(sbyte))
                 plctag.plc_tag_set_int8(Id, 0, SByte.Parse(value));
 
@@ -92,20 +89,29 @@ namespace VikingLibPlcTagNet.Tags
             else if (typeof(T) == typeof(long))
                 plctag.plc_tag_set_int64(Id, 0, Int64.Parse(value));
 
-            else if (typeof(T) == typeof(double))
-                plctag.plc_tag_set_float64(Id, 0, double.Parse(value));
-
-            else if (typeof(T) == typeof(string))
-                plctag.plc_tag_set_string(Id, 0, value);
-
             else if (typeof(T) == typeof(byte))
                 plctag.plc_tag_set_uint8(Id, 0, byte.Parse(value));
 
             else if (typeof(T) == typeof(ushort))
                 plctag.plc_tag_set_uint16(Id, 0, ushort.Parse(value));
 
+            else if (typeof(T) == typeof(uint))
+                plctag.plc_tag_set_uint32(Id, 0, ushort.Parse(value));
+
             else if (typeof(T) == typeof(ulong))
                 plctag.plc_tag_set_uint64(Id, 0, ulong.Parse(value));
+
+            else if (typeof(T) == typeof(float))
+                plctag.plc_tag_set_float32(Id, 0, Single.Parse(value));
+
+            else if (typeof(T) == typeof(double))
+                plctag.plc_tag_set_float64(Id, 0, double.Parse(value));
+
+            else if (typeof(T) == typeof(DateTime))
+                plctag.plc_tag_set_int32(Id, 0, Int32.Parse(value));
+
+            //else if (typeof(T) == typeof(string))
+            //    plctag.plc_tag_set_string(Id, 0, value);
 
             else
                 throw new InvalidCastException("Data type not recognized.");
@@ -136,9 +142,6 @@ namespace VikingLibPlcTagNet.Tags
             if (typeof(T) == typeof(bool))
                 return plctag.plc_tag_get_bit(id, 0).ToString();
 
-            if (typeof(T) == typeof(float))
-                return plctag.plc_tag_get_float32(id, 0).ToString();
-
             if (typeof(T) == typeof(sbyte))
                 return plctag.plc_tag_get_int8(id, 0).ToString();
 
@@ -150,9 +153,6 @@ namespace VikingLibPlcTagNet.Tags
 
             if (typeof(T) == typeof(long))
                 return plctag.plc_tag_get_int64(id, 0).ToString();
-
-            if (typeof(T) == typeof(double))
-                return plctag.plc_tag_get_float64(id, 0).ToString();
 
             if (typeof(T) == typeof(byte))
                 return plctag.plc_tag_get_uint8(id, 0).ToString();
@@ -166,8 +166,16 @@ namespace VikingLibPlcTagNet.Tags
             if (typeof(T) == typeof(ulong))
                 return plctag.plc_tag_get_uint64(id, 0).ToString();
 
-            // TODO: Controller "STRING" is a UDT wieh LEN and DATA.
-            // DATA is an array of SINTs.
+            if (typeof(T) == typeof(float))
+                return plctag.plc_tag_get_float32(id, 0).ToString();
+
+            if (typeof(T) == typeof(double))
+                return plctag.plc_tag_get_float64(id, 0).ToString();
+
+            if (typeof(T) == typeof(DateTime))
+                return plctag.plc_tag_get_int32(id, 0).ToString();
+
+            // STRING is a UDT
             //if (typeof(T) == typeof(string))
             //{
             //    var sb = new StringBuilder(200);

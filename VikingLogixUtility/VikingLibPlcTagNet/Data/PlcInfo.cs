@@ -302,23 +302,7 @@ namespace VikingLibPlcTagNet.Data
                 yield return tag.Name;
         }
 
-        public string? GetTagValue(string programName, string tagName, string? templateName = null, string? parameterName = null)
-        {
-            var tag = GetTag(programName, tagName, templateName, parameterName);
-
-            tag?.Read();
-
-            return tag?.Value;
-        }
-
-        public void WriteTagValue(string programName, string tagName, string value, string? templateName = null, string? parameterName = null)
-        {
-            var tag = GetTag(programName, tagName, templateName, parameterName);
-
-            tag?.Write(value);
-        }
-
-        private ITag? GetTag(string programName, string tagName, string? templateName = null, string? parameterName = null)
+        public ITag? GetTag(string programName, string tagName, string? templateName = null, string? parameterName = null)
         {
             var udtRequired = templateName is not null && parameterName is not null;
 
@@ -373,7 +357,10 @@ namespace VikingLibPlcTagNet.Data
         private ITag? GetCachedOrNewTag(DataTypes type, TagPath path, string fqn)
         {
             if (tagCache.TryGetValue(fqn, out var tag))
+            {
+                tag.Read();
                 return tag;
+            }
 
             var newTag = TagFactory.GetTagFor(type, path, fqn);
 

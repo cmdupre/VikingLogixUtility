@@ -306,9 +306,9 @@ namespace VikingLogixUtility.ViewModels
                 if (Cancel())
                     return;
 
-                var tagValue = plcInfo.GetTagValue(ScopeSelectedItem.Name, tagName);
+                var tag = plcInfo.GetTag(ScopeSelectedItem.Name, tagName);
 
-                if (tagValue is null)
+                if (tag is null)
                 {
                     Log($"Unable to read tag {tagName}.");
                     continue;
@@ -317,7 +317,7 @@ namespace VikingLogixUtility.ViewModels
                 var cells = new List<CellViewModel>()
                 {
                     new (Constants.TagName, tagName, string.Empty, true),
-                    new (Constants.ValName, tagValue, string.Empty)
+                    new (Constants.ValName, tag.Value!, string.Empty)
                 };
 
                 rows.Add(new RowViewModel(cells));
@@ -366,7 +366,8 @@ namespace VikingLogixUtility.ViewModels
                 if (string.IsNullOrWhiteSpace(writeValueString))
                     continue;
 
-                plcInfo.WriteTagValue(ScopeSelectedItem.Name, tagName, writeValueString);
+                plcInfo.GetTag(ScopeSelectedItem.Name, tagName)?
+                    .Write(writeValueString);
             }
         }
     }
