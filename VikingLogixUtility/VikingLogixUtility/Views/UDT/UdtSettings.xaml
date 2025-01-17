@@ -34,6 +34,10 @@
                 Content="Write"
                 Command="{Binding WriteClicked}"
                 />
+            <Button 
+                Content="Cancel"
+                Command="{Binding CancelClicked}"
+                />
         </StackPanel>
     </Grid>
 </UserControl>

@@ -28,7 +28,7 @@ namespace VikingLibPlcTagNet.Data
             this.templateInfos = templateInfos;
         }
 
-        public static PlcInfo Build(TagListing tagListing)
+        public static PlcInfo? Build(TagListing tagListing, Func<bool>? cancellationToken = null)
         {
             List<TagInfo> tagInfos = [];
             List<ushort> templateIds = [];
@@ -37,6 +37,9 @@ namespace VikingLibPlcTagNet.Data
 
             while (offset < tagListing.PayloadSize)
             {
+                if (cancellationToken is not null && cancellationToken())
+                    return null;
+
                 var id = plctag.plc_tag_get_uint32(tagListing.Id, offset);
                 offset += 4;
 
@@ -89,10 +92,13 @@ namespace VikingLibPlcTagNet.Data
 
             // Process template ids.
 
-            var templateInfos = new List<TemplateInfo>();
+            List<TemplateInfo> templateInfos = [];
 
             foreach (var id in templateIds.Distinct())
             {
+                if (cancellationToken is not null && cancellationToken())
+                    return null;
+
                 using var templateInfo = TagFactory.GetTagFor(null, tagListing.Path, $"@udt/{id}");
 
                 if (templateInfo is null)
@@ -123,6 +129,9 @@ namespace VikingLibPlcTagNet.Data
 
                 for (int fieldIndex = 0; fieldIndex < numMembers; fieldIndex++)
                 {
+                    if (cancellationToken is not null && cancellationToken())
+                        return null;
+
                     var fieldMetadata = plctag.plc_tag_get_uint16(templateInfo.Id, offset);
                     offset += 2;
 
@@ -170,6 +179,9 @@ namespace VikingLibPlcTagNet.Data
 
                 foreach (var field in fields)
                 {
+                    if (cancellationToken is not null && cancellationToken())
+                        return null;
+
                     if (offset >= tagSize)
                         throw new InvalidDataException("Refusing to read past tag size.");
 
@@ -211,12 +223,18 @@ namespace VikingLibPlcTagNet.Data
 
             foreach (var programName in programNames)
             {
+                if (cancellationToken is not null && cancellationToken())
+                    return null;
+
                 using var programTagListing = TagListing.CreateForProgram(tagListing.Path, programName);
 
                 if (programTagListing is null)
                     continue;
 
-                var programInfo = Build(programTagListing);
+                var programInfo = Build(programTagListing, cancellationToken);
+
+                if (programInfo is null)
+                    return null;
 
                 tagInfos.AddRange(
                     programInfo.Tags.Select(
@@ -227,7 +245,7 @@ namespace VikingLibPlcTagNet.Data
                         t => t.WithProgramName(programName)));
             }
 
-            return new PlcInfo(tagInfos, templateInfos);
+            return new(tagInfos, templateInfos);
         }
 
         public IList<TagInfo> Tags => tagInfos;

@@ -16,5 +16,6 @@ namespace VikingLogixUtility.Interfaces
         public void WriteTags();
         public ObservableCollection<RowViewModel> Rows { get; set; }
         public void FilterTags();
+        public bool CancelRequested { get; set; }
     }
 }

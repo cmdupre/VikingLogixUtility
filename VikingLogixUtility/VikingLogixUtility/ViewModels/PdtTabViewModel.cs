@@ -25,6 +25,7 @@ namespace VikingLogixUtility.ViewModels
         private DisplayStringViewModel? scopeSelectedItem = null;
         private ObservableCollection<RowViewModel> savedRows = [];
         private string filterText = string.Empty;
+        private bool cancelRequested = false;
 
         public void Dispose() => plcInfo?.Dispose();
 
@@ -38,6 +39,8 @@ namespace VikingLogixUtility.ViewModels
         public ICommand ReadClicked => new ReadCommand(this);
 
         public ICommand WriteClicked => new WriteCommand(this);
+
+        public ICommand CancelClicked => new CancelCommand(this);
 
         public bool IsRunning
         {
@@ -143,6 +146,12 @@ namespace VikingLogixUtility.ViewModels
             }
         }
 
+        public bool CancelRequested
+        {
+            get => cancelRequested;
+            set => cancelRequested = value;
+        }
+
         public async void LoadScopes()
         {
             if (IsRunning)
@@ -151,9 +160,6 @@ namespace VikingLogixUtility.ViewModels
             IsRunning = true;
 
             Log("Loading scopes...");
-
-            // allow UI to update.
-            await Task.Delay(100);
 
             await Task.Run(() =>
             {
@@ -180,9 +186,6 @@ namespace VikingLogixUtility.ViewModels
             IsRunning = true;
 
             Log("Loading tag editor...");
-
-            // allow UI to update.
-            await Task.Delay(100);
 
             await Task.Run(() =>
             {
@@ -236,7 +239,6 @@ namespace VikingLogixUtility.ViewModels
         {
             var filteredRows = new ObservableCollection<RowViewModel>();
 
-            // TODO: upgrade to regular expression
             foreach (var savedRow in savedRows)
                 if (savedRow.Properties.First().ReadValue.Contains(FilterText, StringComparison.InvariantCultureIgnoreCase))
                     filteredRows.Add(savedRow);
@@ -246,20 +248,39 @@ namespace VikingLogixUtility.ViewModels
 
         private void LoadScopesBackground()
         {
+            using var listing = TagListing.Create(new TagPath(Address));
+
+            if (listing is null)
+                return;
+
+            if (Cancel())
+                return;
+
+            plcInfo = PlcInfo.Build(listing, Cancel);
+
+            if (plcInfo is null) 
+                return;
+
             App.Current.Dispatcher.Invoke(() =>
+                ScopeItems.Add(new DisplayStringViewModel(Constants.Controller)));
+
+            foreach (var programName in plcInfo.ProgramNames)
+                App.Current.Dispatcher.Invoke(() =>
+                    ScopeItems.Add(new DisplayStringViewModel(programName)));
+        }
+
+        private bool Cancel()
+        {
+            if (CancelRequested)
             {
-                using var listing = TagListing.Create(new TagPath(Address));
+                Log("Cancel requested...");
 
-                if (listing is null)
-                    return;
+                CancelRequested = false;
 
-                plcInfo = PlcInfo.Build(listing);
+                return true;
+            }
 
-                ScopeItems.Add(new DisplayStringViewModel(Constants.Controller));
-
-                foreach (var programName in plcInfo.ProgramNames)
-                    ScopeItems.Add(new DisplayStringViewModel(programName));
-            });
+            return false;
         }
 
         private void LoadTagEditorBackground(string? filterText = null)
@@ -282,6 +303,9 @@ namespace VikingLogixUtility.ViewModels
 
             foreach (var tagName in tagNames)
             {
+                if (Cancel())
+                    return;
+
                 var tagValue = plcInfo.GetTagValue(ScopeSelectedItem.Name, tagName);
 
                 if (tagValue is null)
