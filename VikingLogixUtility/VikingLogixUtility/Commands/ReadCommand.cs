@@ -1,6 +1,7 @@
 ﻿using VikingLogixUtility.Bases;
 using VikingLogixUtility.Interfaces;
 using VikingLogixUtility.Models;
+using VikingLogixUtility.RegEx;
 
 namespace VikingLogixUtility.Commands
 {
@@ -10,7 +11,7 @@ namespace VikingLogixUtility.Commands
         {
             return
                 !viewModel.IsRunning &&
-                !string.IsNullOrWhiteSpace(viewModel.Address);
+                RegularExpressions.MappingFilter().IsMatch(viewModel.Address);
         }
 
         public override void Execute(object? parameter)

@@ -28,6 +28,7 @@
             <Button 
                 Content="Read"
                 Command="{Binding ReadClicked}"
+                IsDefault="True"
                 />
             <Button 
                 Content="Write"
