@@ -3,8 +3,8 @@ using L5Sharp.Core;
 using System.Data;
 using VikingLogixUtility.Common;
 using VikingLogixUtility.Extensions;
-using VikingLogixUtility.L5xApp.Models;
 using VikingLogixUtility.L5xApp.Interfaces;
+using VikingLogixUtility.L5xApp.Models;
 
 namespace VikingLogixUtility.L5xApp.Processors
 {
@@ -33,14 +33,12 @@ namespace VikingLogixUtility.L5xApp.Processors
                 TagWriter.Geaux(viewModel, exportTable, mapping, scope, tags);
             }
 
-            using (var workbook = new XLWorkbook())
-            {
-                var worksheet = workbook.AddWorksheet(exportTable.Table, "Tag Export");
-                worksheet.Table(0).SetShowColumnStripes(false);
-                worksheet.Table(0).SetShowRowStripes(false);
-                worksheet.Columns().AdjustToContents();
-                workbook.SaveAs(viewModel.L5XFilenameToolTip.WithXlsxExtension());
-            }
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.AddWorksheet(exportTable.Table, "Tag Export");
+            worksheet.Table(0).SetShowColumnStripes(false);
+            worksheet.Table(0).SetShowRowStripes(false);
+            worksheet.Columns().AdjustToContents();
+            workbook.SaveAs(viewModel.L5XFilenameToolTip.WithXlsxExtension());
 
             viewModel.Log("Done.");
         }

@@ -8,8 +8,8 @@ namespace VikingLogixUtility.L5xApp.Commands
     {
         public override bool CanExecute(object? parameter)
         {
-            return 
-                !viewModel.IsRunning && 
+            return
+                !viewModel.IsRunning &&
                 !string.IsNullOrEmpty(viewModel.L5XFilename);
         }
 

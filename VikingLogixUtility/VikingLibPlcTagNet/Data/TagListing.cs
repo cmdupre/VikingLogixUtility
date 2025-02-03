@@ -1,4 +1,5 @@
 ﻿using libplctag.NativeImport;
+using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 using VikingLibPlcTagNet.Tags;
 
@@ -17,9 +18,9 @@ namespace VikingLibPlcTagNet.Data
 
         public void Dispose() => tag.Dispose();
 
-        public static TagListing? Create(TagPath path, string name = "@tags")
+        public static TagListing? Create(ILoggable logger, TagPath path, string name = "@tags")
         {
-            var tag = TagFactory.GetTagFor(null, path, name);
+            var tag = TagFactory.GetTagFor(logger, null, path, name);
 
             if (tag is null)
                 return null;
@@ -35,8 +36,8 @@ namespace VikingLibPlcTagNet.Data
             return new TagListing(tag, payloadSize);
         }
 
-        public static TagListing? CreateForProgram(TagPath path, string name) => 
-            Create(path, $"Program:{name}.@tags");
+        public static TagListing? CreateForProgram(ILoggable logger, TagPath path, string name) =>
+            Create(logger, path, $"Program:{name}.@tags");
 
         public int Id => tag.Id;
 

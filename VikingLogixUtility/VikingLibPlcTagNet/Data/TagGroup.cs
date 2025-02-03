@@ -1,4 +1,4 @@
-﻿using VikingLibPlcTagNet.Tags;
+﻿using VikingLibPlcTagNet.Interfaces;
 
 namespace VikingLibPlcTagNet.Data
 {
@@ -20,10 +20,10 @@ namespace VikingLibPlcTagNet.Data
 
         public bool AllChanged => !NotChanged.Any();
 
-        public void ReadAllTags()
+        public void ReadAllTags(ILoggable logger)
         {
             foreach (var tag in tags)
-                tag.Read();
+                tag.Read(logger);
         }
 
         public void Dispose()

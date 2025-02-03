@@ -1,8 +1,8 @@
 ﻿using L5Sharp.Core;
 using System.Data;
-using VikingLogixUtility.L5xApp.RegEx;
-using VikingLogixUtility.L5xApp.Models;
 using VikingLogixUtility.L5xApp.Interfaces;
+using VikingLogixUtility.L5xApp.Models;
+using VikingLogixUtility.L5xApp.RegEx;
 
 namespace VikingLogixUtility.L5xApp.Processors
 {

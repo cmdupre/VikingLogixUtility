@@ -1,5 +1,4 @@
 ﻿using System.Collections.ObjectModel;
-using VikingLogixUtility.Interfaces;
 using VikingLogixUtility.L5xApp.ViewModels;
 
 namespace VikingLogixUtility.L5xApp.Interfaces

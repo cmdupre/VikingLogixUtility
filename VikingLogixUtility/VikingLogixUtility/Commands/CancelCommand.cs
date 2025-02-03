@@ -3,7 +3,7 @@ using VikingLogixUtility.Interfaces;
 
 namespace VikingLogixUtility.Commands
 {
-    internal sealed class CancelCommand(IEditorViewModel viewModel) : BaseCommand
+    internal sealed class CancelCommand(ICancelable viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {

@@ -18,7 +18,7 @@ namespace VikingLogixUtility.L5xApp.Models
             exportTable.Columns.Add(new DataColumn("Description", typeof(string)));
             exportTable.Columns.Add(new DataColumn("Value", typeof(string)));
             exportTable.Columns.Add(new DataColumn("Address", typeof(string)));
-            
+
             return new ExportTable(exportTable);
         }
 

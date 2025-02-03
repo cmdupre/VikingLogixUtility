@@ -1,7 +1,6 @@
-﻿using System.Windows;
-using System.Windows.Controls;
-using VikingLogixUtility.Extensions;
-using VikingLogixUtility.Interfaces;
+﻿using System.Windows.Controls;
+using System.Windows.Input;
+using VikingLogixUtility.ViewModels;
 
 namespace VikingLogixUtility.Views.UDT
 {
@@ -15,24 +14,22 @@ namespace VikingLogixUtility.Views.UDT
             InitializeComponent();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void ViewDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            e.Handled = true;
-
-            if (DataContext is not IEditorViewModel vm)
+            if (DataContext is not UdtTabViewModel vm)
                 return;
 
-            vm.TagEditor = TagEditor;
-        }
+            if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                vm.TagEditorGridTable.PasteFromClipboard(vm.Logger);
+                e.Handled = true;
+            }
 
-        private void TagEditor_Sorting(object sender, DataGridSortingEventArgs e)
-        {
-            e.Handled = true;
-
-            if (DataContext is not IEditorViewModel vm)
-                return;
-
-            vm.Rows = vm.Rows.Sort(e.Column.DisplayIndex);
+            if (e.Key == Key.C && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)
+            {
+                vm.TagEditorGridTable.CopyToClipboard();
+                e.Handled = true;
+            }
         }
     }
 }

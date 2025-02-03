@@ -1,4 +1,5 @@
 ﻿using libplctag.NativeImport;
+using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 
 namespace VikingLibPlcTagNet.Tags
@@ -8,7 +9,7 @@ namespace VikingLibPlcTagNet.Tags
         private readonly TagPath path;
         private readonly string fqn;
         private readonly int id;
-        
+
         private string currentValue;
         private string previousValue;
 
@@ -25,14 +26,17 @@ namespace VikingLibPlcTagNet.Tags
 
         private static void Destroy(int id) => plctag.plc_tag_destroy(id);
 
-        internal static Tag<T>? Create(TagPath path, string fqn)
+        internal static Tag<T>? Create(ILoggable logger, TagPath path, string fqn)
         {
             var id = plctag.plc_tag_create(path.WithFqn(fqn), path.Timeout);
 
             if (id < 0)
+            {
+                logger.Log($"{plctag.plc_tag_decode_error(id)} ({fqn})");
                 return null;
+            }
 
-            var value = Read(id, path.Timeout);
+            var value = Read(logger, id, path.Timeout);
 
             if (value is null)
             {
@@ -72,7 +76,7 @@ namespace VikingLibPlcTagNet.Tags
 
         public bool Changed => !Value.Equals(PreviousValue);
 
-        public void Write(string value)
+        public void Write(ILoggable logger, string value)
         {
             if (typeof(T) == typeof(bool))
                 plctag.plc_tag_set_bit(Id, 0, Int32.Parse(value));
@@ -115,30 +119,39 @@ namespace VikingLibPlcTagNet.Tags
             //    plctag.plc_tag_set_string(Id, 0, value);
 
             else
-                throw new InvalidCastException("Data type not recognized.");
+            {
+                logger.Log("Data type not recognized.");
+                return;
+            }
 
             plctag.plc_tag_write(Id, Path.Timeout);
 
             Value = value;
         }
 
-        public void Read() =>
-            Value = Read(Id, Path.Timeout);
+        public void Read(ILoggable logger) =>
+            Value = Read(logger, Id, Path.Timeout);
 
-        public void Toggle()
+        public void Toggle(ILoggable logger)
         {
             if (typeof(T) != typeof(bool))
-                throw new NotImplementedException("Not valid for this data type.");
+            {
+                logger.Log($"Not valid for data type {typeof(T)}.");
+                return;
+            }
 
-            Write(Value == "1" ? "0" : "1");
+            Write(logger, Value == "1" ? "0" : "1");
         }
 
-        private static string Read(int id, int timeout)
+        private static string Read(ILoggable logger, int id, int timeout)
         {
             var result = plctag.plc_tag_read(id, timeout);
 
             if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-                throw new InvalidDataException(plctag.plc_tag_decode_error(result));
+            {
+                logger.Log(plctag.plc_tag_decode_error(result));
+                return string.Empty;
+            }
 
             if (typeof(T) == typeof(bool))
                 return plctag.plc_tag_get_bit(id, 0).ToString();
@@ -185,12 +198,16 @@ namespace VikingLibPlcTagNet.Tags
             //    var getStringResult = plctag.plc_tag_get_string(id, 0, sb, sb.Length);
 
             //    if (getStringResult != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-            //        throw new InvalidDataException(plctag.plc_tag_decode_error(getStringResult));
+            //{
+            //        logger.Log(plctag.plc_tag_decode_error(getStringResult));
+            //            return string.empty
+            //}
 
             //    return sb.ToString();
             //}
 
-            throw new InvalidCastException("Data type not recognized.");
+            logger.Log($"Data type {typeof(T)} not recognized.");
+            return string.Empty;
         }
     }
 }

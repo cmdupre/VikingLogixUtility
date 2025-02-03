@@ -1,5 +1,5 @@
 ﻿using L5Sharp.Core;
-using VikingLogixUtility.Interfaces;
+using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.RegEx;
 
 namespace VikingLogixUtility.L5xApp.Processors
@@ -45,14 +45,14 @@ namespace VikingLogixUtility.L5xApp.Processors
 
                     if (parts.Length < 4)
                         continue;
-                    
+
                     if (parts[1].Equals(tag.Name, StringComparison.InvariantCultureIgnoreCase) &&
                         RegularExpressions.MappingFilter().IsMatch(parts[3]))
-                            return parts[3];
+                        return parts[3];
 
                     if (parts[3].Equals(tag.Name, StringComparison.InvariantCultureIgnoreCase) &&
                         RegularExpressions.MappingFilter().IsMatch(parts[1]))
-                            return parts[1];
+                        return parts[1];
                 }
 
                 replacedMapping = tagMapping
@@ -73,14 +73,14 @@ namespace VikingLogixUtility.L5xApp.Processors
 
                     if (parts.Length < 2)
                         continue;
-                    
+
                     if (parts[0].Equals(tag.Name, StringComparison.InvariantCultureIgnoreCase) &&
                         RegularExpressions.MappingFilter().IsMatch(parts[1]))
-                            return parts[1];
+                        return parts[1];
 
                     if (parts[1].Equals(tag.Name, StringComparison.InvariantCultureIgnoreCase) &&
                         RegularExpressions.MappingFilter().IsMatch(parts[0]))
-                            return parts[0];
+                        return parts[0];
                 }
 
                 viewModel.Log($" - Warning: unable to parse address for tag {tag.Name}.");

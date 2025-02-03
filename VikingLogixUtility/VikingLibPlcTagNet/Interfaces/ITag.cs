@@ -1,6 +1,6 @@
 ﻿using VikingLibPlcTagNet.Settings;
 
-namespace VikingLibPlcTagNet.Tags
+namespace VikingLibPlcTagNet.Interfaces
 {
     public interface ITag : IDisposable
     {
@@ -10,9 +10,8 @@ namespace VikingLibPlcTagNet.Tags
         string? Value { get; }
         string? PreviousValue { get; }
         bool Changed { get; }
-
-        void Write(string value);
-        void Read();
-        void Toggle();
+        void Write(ILoggable logger, string value);
+        void Read(ILoggable logger);
+        void Toggle(ILoggable logger);
     }
 }

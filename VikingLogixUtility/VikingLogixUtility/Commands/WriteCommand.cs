@@ -5,23 +5,23 @@ using VikingLogixUtility.Interfaces;
 
 namespace VikingLogixUtility.Commands
 {
-    internal sealed class WriteCommand(IEditorViewModel viewModel) : BaseCommand
+    internal sealed class WriteCommand(IWriteable viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {
             return
                 !viewModel.IsRunning &&
                 viewModel.ScopeSelectedItem?.Name != Constants.All &&
-                (viewModel.TagEditor?.HasItems ?? false);
+                (viewModel.TagEditorGridTable?.VisibleRows.Any() ?? false);
         }
 
         public override void Execute(object? parameter)
         {
             var result = MessageBox.Show(
-                "Are you sure?", 
-                "Write Tags", 
-                MessageBoxButton.YesNo, 
-                MessageBoxImage.Question, 
+                "Are you sure?",
+                "Write Tags",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question,
                 MessageBoxResult.No);
 
             if (result != MessageBoxResult.Yes)
@@ -29,7 +29,7 @@ namespace VikingLogixUtility.Commands
                 MessageBox.Show("Operation cancelled.", "Write Tags", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
-            
+
             viewModel.WriteTags();
         }
     }

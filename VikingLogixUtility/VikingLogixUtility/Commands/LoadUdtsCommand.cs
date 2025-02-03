@@ -3,7 +3,7 @@ using VikingLogixUtility.Interfaces;
 
 namespace VikingLogixUtility.Commands
 {
-    internal sealed class LoadUdtsCommand(IUdtTabViewModel viewModel) : BaseCommand
+    internal sealed class LoadUdtsCommand(IUdtsLoadable viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {

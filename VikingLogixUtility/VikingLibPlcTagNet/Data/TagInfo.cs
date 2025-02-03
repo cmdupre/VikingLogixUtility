@@ -35,31 +35,31 @@ namespace VikingLibPlcTagNet.Data
             return Create(path, id, type, elementLength, arrayDims, name.ToString());
         }
 
-        public TagInfo WithProgramName(string programName) => 
+        public TagInfo WithProgramName(string programName) =>
             new(Path, Id, Type, ElementLength, ArrayDims, Name, programName);
 
         public TagPath Path => path;
 
         public uint Id => id;
-        
+
         public DataTypes Type => type;
 
-        public ushort NumberDimensions => 
+        public ushort NumberDimensions =>
             (ushort)(((ushort)Type & BitMasks.Dim) >> 13);
 
         /// <summary>
         /// Only valid if IsUdt is true.
         /// </summary>
-        public ushort TemplateId => IsUdt 
-            ? (ushort)((ushort)Type & BitMasks.UdtId) 
+        public ushort TemplateId => IsUdt
+            ? (ushort)((ushort)Type & BitMasks.UdtId)
             : default;
 
         public bool IsUdt => ((ushort)type & BitMasks.StructBit) > 0;
 
         public ushort ElementLength => elementLength;
-        
+
         public uint[] ArrayDims => arrayDims;
-        
+
         public string Name => name;
 
         public string ProgramName => programName;

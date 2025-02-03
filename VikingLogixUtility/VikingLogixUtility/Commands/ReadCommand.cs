@@ -5,7 +5,7 @@ using VikingLogixUtility.RegEx;
 
 namespace VikingLogixUtility.Commands
 {
-    internal sealed class ReadCommand(IEditorViewModel viewModel) : BaseCommand
+    internal sealed class ReadCommand(ITagEditorLoadable viewModel) : BaseCommand
     {
         public override bool CanExecute(object? parameter)
         {
@@ -19,7 +19,7 @@ namespace VikingLogixUtility.Commands
             if (viewModel.ScopeItems.Count < 1)
             {
                 var settings = new Settings(viewModel.Address);
-                
+
                 settings.Write();
 
                 viewModel.LoadScopes();

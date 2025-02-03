@@ -10,13 +10,9 @@ namespace VikingLogixUtility.Views.UDT
     /// </summary>
     public partial class UdtTab : UserControl
     {
-        private readonly UdtTabViewModel viewModel = new();
-
         public UdtTab()
         {
             InitializeComponent();
-
-            DataContext = viewModel;
         }
 
         private void Output_TextChanged(object sender, TextChangedEventArgs e)
@@ -36,7 +32,10 @@ namespace VikingLogixUtility.Views.UDT
 
         private void WindowClosing(object? sender, CancelEventArgs e)
         {
-            viewModel.Dispose();
+            if (DataContext is not UdtTabViewModel vm)
+                return;
+
+            vm.Dispose();
         }
     }
 }

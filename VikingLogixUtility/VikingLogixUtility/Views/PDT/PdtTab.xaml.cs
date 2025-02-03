@@ -10,13 +10,9 @@ namespace VikingLogixUtility.Views.PDT
     /// </summary>
     public partial class PdtTab : UserControl
     {
-        private readonly PdtTabViewModel viewModel = new();
-
         public PdtTab()
         {
             InitializeComponent();
-            
-            DataContext = viewModel;
         }
 
         private void Output_TextChanged(object sender, TextChangedEventArgs e)
@@ -29,14 +25,17 @@ namespace VikingLogixUtility.Views.PDT
             textbox.ScrollToEnd();
         }
 
-        private void PdtTab_Loaded(object sender, System.Windows.RoutedEventArgs e)
+        private void PdtTab_Loaded(object sender, RoutedEventArgs e)
         {
             Window.GetWindow(this).Closing += WindowClosing;
         }
 
         private void WindowClosing(object? sender, CancelEventArgs e)
         {
-            viewModel.Dispose();
+            if (DataContext is not PdtTabViewModel vm)
+                return;
+
+            vm.Dispose();
         }
     }
 }

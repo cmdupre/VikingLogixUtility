@@ -24,6 +24,7 @@
                 VerticalContentAlignment="Center"
                 Width="100px"
                 TextChanged="Address_TextChanged"
+                IsEnabled="{Binding IsNotRunning}"
                 Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
             <Button 
                 Content="Read"
@@ -37,6 +38,10 @@
             <Button 
                 Content="Cancel"
                 Command="{Binding CancelClicked}"
+                />
+            <Button 
+                Content="Export"
+                Command="{Binding ExportClicked}"
                 />
         </StackPanel>
     </Grid>

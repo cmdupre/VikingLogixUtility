@@ -6,6 +6,13 @@ Initial Release: 1/9/2025
 
 *******************************************************************************
 
+Version 1.2.0, 2/10/2025, C. Dupre
+- Use DataGrid for Tag Editor.
+- Implement copy/paste from/to Tag Editor.
+- Implement Tag Editor export.
+- Refactor Tag Editor logger and remove exceptions.
+- UI improvements.
+
 Version 1.1.0, 1/17/2025, C. Dupre
 - UI improvements.
 

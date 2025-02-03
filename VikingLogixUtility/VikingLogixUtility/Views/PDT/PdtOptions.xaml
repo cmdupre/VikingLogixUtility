@@ -49,6 +49,7 @@
                 HorizontalAlignment="Left"
                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
                 TextChanged="FilterText_TextChanged"
+                IsEnabled="{Binding IsNotRunning}"
                 Width="200px">
             </TextBox>
         </GroupBox>

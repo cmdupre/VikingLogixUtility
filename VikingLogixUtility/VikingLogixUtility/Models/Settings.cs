@@ -11,7 +11,7 @@ namespace VikingLogixUtility.Models
             .Location
             .Replace(".dll", ".json");
 
-        private static Settings Default => 
+        private static Settings Default =>
             new(string.Empty);
 
         public static Settings Load(string? filename = null)

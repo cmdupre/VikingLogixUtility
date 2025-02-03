@@ -1,4 +1,5 @@
 ﻿using libplctag.NativeImport;
+using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 
 namespace VikingLibPlcTagNet.Tags
@@ -18,32 +19,38 @@ namespace VikingLibPlcTagNet.Tags
 
         public void Dispose() => plctag.plc_tag_destroy(Id);
 
-        internal static TagReadonly? Create(TagPath path, string name)
+        internal static TagReadonly? Create(ILoggable logger, TagPath path, string name)
         {
             var id = plctag.plc_tag_create(path.WithFqn(name), path.Timeout);
 
             if (id < 0)
+            {
+                logger.Log($"{plctag.plc_tag_decode_error(id)} ({name})");
                 return null;
+            }
 
             var result = plctag.plc_tag_read(id, path.Timeout);
 
             if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
+            {
+                logger.Log(plctag.plc_tag_decode_error(result));
                 return null;
+            }
 
             return new TagReadonly(path, id, name);
         }
 
-        public void Write(string value)
+        public void Write(ILoggable logger, string value)
         {
             // NOP.
         }
 
-        public void Read()
+        public void Read(ILoggable logger)
         {
             // NOP.
         }
 
-        public void Toggle()
+        public void Toggle(ILoggable logger)
         {
             // NOP.
         }

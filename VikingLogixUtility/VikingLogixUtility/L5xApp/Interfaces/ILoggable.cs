@@ -1,4 +1,4 @@
-﻿namespace VikingLogixUtility.Interfaces
+﻿namespace VikingLogixUtility.L5xApp.Interfaces
 {
     internal interface ILoggable
     {

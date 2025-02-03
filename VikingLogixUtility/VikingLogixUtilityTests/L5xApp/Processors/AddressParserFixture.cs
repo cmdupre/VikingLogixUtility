@@ -1,5 +1,5 @@
 ﻿using L5Sharp.Core;
-using VikingLogixUtility.Interfaces;
+using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.Processors;
 
 namespace VikingLogixUtilityTests.L5xApp.Processors
@@ -130,7 +130,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             });
         }
 
-        [TestCase("[MOV(RACK_41:4:I.Ch10.Data,AIT20100A_IN),OTU(AIT20100A.LLEnable)OTU(AIT20100A.LEnable)OTL(AIT20100A.HEnable)OTL(AIT20100A.HHEnable),OTU(AIT20100A.LLBypEn)OTL(AIT20100A.HHBypEn)OTL(AIT20100A.OOSEn),OTL(AIT20100A.ScaleEn)AI_Alm(AIT20100A,AIT20100A_IN,Globals)]", 
+        [TestCase("[MOV(RACK_41:4:I.Ch10.Data,AIT20100A_IN),OTU(AIT20100A.LLEnable)OTU(AIT20100A.LEnable)OTL(AIT20100A.HEnable)OTL(AIT20100A.HHEnable),OTU(AIT20100A.LLBypEn)OTL(AIT20100A.HHBypEn)OTL(AIT20100A.OOSEn),OTL(AIT20100A.ScaleEn)AI_Alm(AIT20100A,AIT20100A_IN,Globals)]",
             "AIT20100A")]
         public void TestTagNameFoundButNoMappingWithIt(string input, string tagName)
         {

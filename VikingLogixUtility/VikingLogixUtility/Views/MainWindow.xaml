@@ -7,6 +7,7 @@
         xmlns:localUdt="clr-namespace:VikingLogixUtility.Views.UDT"
         xmlns:localPdt="clr-namespace:VikingLogixUtility.Views.PDT"
         xmlns:localL5xTagExport="clr-namespace:VikingLogixUtility.L5xApp.Views"
+        Closing="Window_Closing"
         mc:Ignorable="d"
         Height="750" Width="900">
     <Window.Resources>
@@ -39,16 +40,24 @@
             Grid.Row="0"
             Grid.Column="0">
             <TabItem
+                IsEnabled="{Binding IsRunning}"
                 Header="User Defined Tags">
-                <localUdt:UdtTab/>
+                <localUdt:UdtTab
+                    DataContext="{Binding UdtTabVM}"
+                    x:Name="ViewUdtTab"/>
             </TabItem>
             <TabItem
+                IsEnabled="{Binding IsRunning}"
                 Header="Predefined Tags">
-                <localPdt:PdtTab/>
+                <localPdt:PdtTab
+                    DataContext="{Binding PdtTabVM}"
+                    x:Name="ViewPdtTab"/>
             </TabItem>
             <TabItem
+                IsEnabled="{Binding IsRunning}"
                 Header="L5X Tag Export">
-                <localL5xTagExport:L5xTagExportTab/>
+                <localL5xTagExport:L5xTagExportTab
+                    DataContext="{Binding L5xTagExportVM}"/>
             </TabItem>
         </TabControl>
     </Grid>

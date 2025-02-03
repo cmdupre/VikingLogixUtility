@@ -1,5 +1,5 @@
 ﻿using System.Windows.Controls;
-using VikingLogixUtility.Interfaces;
+using VikingLogixUtility.ViewModels;
 
 namespace VikingLogixUtility.Views.PDT
 {
@@ -17,7 +17,7 @@ namespace VikingLogixUtility.Views.PDT
         {
             e.Handled = true;
 
-            if (DataContext is not IEditorViewModel vm)
+            if (DataContext is not PdtTabViewModel vm)
                 return;
 
             vm.ScopeItems.Clear();
