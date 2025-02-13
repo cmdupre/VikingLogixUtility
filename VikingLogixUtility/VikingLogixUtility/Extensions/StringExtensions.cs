@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using VikingLogixUtility.Common;
 
 namespace VikingLogixUtility.Extensions
 {
@@ -17,5 +18,17 @@ namespace VikingLogixUtility.Extensions
                 ? filename
                 : pathname + Path.DirectorySeparatorChar + filename;
         }
+
+        /// <summary>
+        /// Removes artifacts from a grid column name.
+        /// For example, removes " (W)" and double underscores from writeable column name.
+        /// </summary>
+        /// <param name="gridColumnName"></param>
+        /// <returns></returns>
+        public static string Raw(this string s) => s
+            .Replace("__", "_")
+            .Replace(Constants.Read, "")
+            .Replace(Constants.Write, "")
+            .TrimEnd();
     }
 }

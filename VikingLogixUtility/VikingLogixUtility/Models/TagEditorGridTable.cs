@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using VikingLibPlcTagNet.Interfaces;
 using VikingLogixUtility.Common;
+using VikingLogixUtility.Extensions;
 
 namespace VikingLogixUtility.Models
 {
@@ -144,7 +145,7 @@ namespace VikingLogixUtility.Models
             Clipboard.SetText(textBuilder.ToString());
         }
 
-        public void PasteFromClipboard(ILoggable logger)
+        public void PasteFromClipboard(ILoggable? logger = null)
         {
             if (table is null)
                 return;
@@ -162,13 +163,13 @@ namespace VikingLogixUtility.Models
 
                 if (itemValue is not string itemString)
                 {
-                    logger.Log($"Unable to cast grid item (hidden index) to string: {itemValue}");
+                    logger?.Log($"Unable to cast grid item (hidden index) to string: {itemValue}");
                     return;
                 }
 
                 if (!int.TryParse(itemString, out int itemInt))
                 {
-                    logger.Log($"Unable to cast grid item (hidden index) to Int32: {itemString}");
+                    logger?.Log($"Unable to cast grid item (hidden index) to Int32: {itemString}");
                     return;
                 }
 
@@ -231,7 +232,7 @@ namespace VikingLogixUtility.Models
             var exportTable = new DataTable();
 
             foreach (var exportColumnName in exportColumnNames)
-                exportTable.Columns.Add(GetRawColumnName(exportColumnName));
+                exportTable.Columns.Add(exportColumnName.Raw());
 
             foreach (var exportRow in exportRows)
             {
@@ -274,20 +275,6 @@ namespace VikingLogixUtility.Models
             .Where(n => n != Constants.Index)
             .Where(n => !n.Contains(Constants.Write))
             ?? [];
-
-        // todo convert this to extension method?
-        /// <summary>
-        /// Removes artifacts from a grid column name.
-        /// For example, removes " (W)" and double underscores from writeable column name.
-        /// </summary>
-        /// <param name="gridColumnName"></param>
-        /// <returns></returns>
-        public static string GetRawColumnName(string gridColumnName) =>
-            gridColumnName
-            .Replace("__", "_")
-            .Replace(Constants.Read, "")
-            .Replace(Constants.Write, "")
-            .TrimEnd();
 
         private static Style GetReadonlyCellStyle(Brush foregroundColor)
         {

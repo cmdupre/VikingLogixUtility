@@ -6,6 +6,11 @@ Initial Release: 1/9/2025
 
 *******************************************************************************
 
+Version 1.3.0, 2/27/2025, C. Dupre
+- Refactor.
+- Implement progress bar for read/write operations.
+- Implement basic arrays.
+
 Version 1.2.0, 2/10/2025, C. Dupre
 - Use DataGrid for Tag Editor.
 - Implement copy/paste from/to Tag Editor.

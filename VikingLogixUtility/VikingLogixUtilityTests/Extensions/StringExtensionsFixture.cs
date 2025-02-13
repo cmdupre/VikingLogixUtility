@@ -14,5 +14,13 @@ namespace VikingLogixUtilityTests.Extensions
         {
             Assert.That(input.WithXlsxExtension(), Is.EqualTo(expected));
         }
+
+        [TestCase("", "")]
+        [TestCase("Test__Column (W) ", "Test_Column")]
+        [TestCase("Test__Column (R) ", "Test_Column")]
+        public void GetsRawColumnName(string input, string expected)
+        {
+            Assert.That(input.Raw, Is.EqualTo(expected));
+        }
     }
 }

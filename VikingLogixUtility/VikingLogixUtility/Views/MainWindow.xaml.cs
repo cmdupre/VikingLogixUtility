@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Windows;
 using VikingLogixUtility.L5xApp.ViewModels;
+using VikingLogixUtility.Processors;
 using VikingLogixUtility.ViewModels;
 
 namespace VikingLogixUtility.Views
@@ -22,8 +23,8 @@ namespace VikingLogixUtility.Views
                 $"[v{version?.Major}.{version?.Minor}.{version?.Build}]";
 
             var vm = new MainWindowViewModel(
-                new UdtTabViewModel(ViewUdtTab.ViewUdtEditor.ViewDataGrid),
-                new PdtTabViewModel(ViewPdtTab.ViewPdtEditor.ViewDataGrid),
+                new TagEditorViewModel(ViewUdtTab.ViewUdtEditor.ViewDataGrid, new TagProcessorUdt()),
+                new TagEditorViewModel(ViewPdtTab.ViewPdtEditor.ViewDataGrid, new TagProcessorPdt()),
                 new L5xTagExportViewModel());
 
             DataContext = vm;

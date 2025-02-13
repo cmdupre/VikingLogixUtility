@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Data;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using VikingLibPlcTagNet.Data;
@@ -15,33 +16,45 @@ using VikingLogixUtility.Processors;
 
 namespace VikingLogixUtility.ViewModels
 {
-    internal sealed class UdtTabViewModel : BaseNotifyPropertyChanged,
+    internal sealed class TagEditorViewModel : BaseNotifyPropertyChanged,
         IDisposable,
-        IUdtsLoadable,
-        IParametersLoadable,
         ITagEditorLoadable,
         ICancelable,
         IExportable,
-        IWriteable
+        IWriteable,
+        IUdtsLoadable,
+        IParametersLoadable
     {
-        private readonly Logger logger = new();
+        private readonly ITagEditable tagProcessor;
         private readonly TagEditorGridTable tagEditorGridTable;
-        private PlcInfo? plcInfo = null;
+        private readonly Logger logger = new();
+
         private bool isRunning = false;
-        private Cursor saveCursor = Mouse.OverrideCursor;
+        private bool cancelRequested = false;
+        private int progressBarValue = 0;
+        private int progressBarMaximum = 100;
         private string address = string.Empty;
+        private string filterText = string.Empty;
         private ObservableCollection<DisplayStringViewModel> scopeItems = [];
         private ObservableCollection<DisplayStringViewModel> udtItems = [];
         private ObservableCollection<DisplayStringViewModel> parameterItems = [];
         private DisplayStringViewModel? scopeSelectedItem = null;
         private DisplayStringViewModel? udtSelectedItem = null;
+        private PlcInfo? plcInfo = null;
+        private Cursor saveCursor = Mouse.OverrideCursor;
+        private Visibility progressBarVisibility = Visibility.Hidden;
         private IEnumerable<DisplayStringViewModel>? parameterSelectedItems = null;
-        private string filterText = string.Empty;
-        private bool cancelRequested = false;
 
-        public void Dispose() => plcInfo?.Dispose();
+        public ICommand ReadClicked => new ReadCommand(this);
+        public ICommand WriteClicked => new WriteCommand(this);
+        public ICommand CancelClicked => new CancelCommand(this);
+        public ICommand ExportClicked => new TagEditorExportCommand(this);
+        public ICommand UdtItemsSelectionChanged => new LoadParametersCommand(this);
+        public ICommand ScopeItemsSelectionChanged => new LoadUdtsCommand(this);
 
-        public UdtTabViewModel(DataGrid viewDataGrid)
+        public void Dispose() => PlcInfo?.Dispose();
+
+        public TagEditorViewModel(DataGrid viewDataGrid, ITagEditable tagProcessor)
         {
             var settings = Settings.Load();
 
@@ -50,57 +63,18 @@ namespace VikingLogixUtility.ViewModels
             tagEditorGridTable = new(viewDataGrid);
 
             logger.TextChanged +=
-                ((sender, e) => { NotifyPropertyChanged(nameof(Output)); });
+                (sender, e) => { NotifyPropertyChanged(nameof(Output)); };
+
+            this.tagProcessor = tagProcessor;
         }
 
-        public ICommand ScopeItemsSelectionChanged => new LoadUdtsCommand(this);
-        public ICommand UdtItemsSelectionChanged => new LoadParametersCommand(this);
-        public ICommand ReadClicked => new ReadCommand(this);
-        public ICommand WriteClicked => new WriteCommand(this);
-        public ICommand CancelClicked => new CancelCommand(this);
-        public ICommand ExportClicked => new TagEditorExportCommand(this);
+        public PlcInfo? PlcInfo => plcInfo;
 
         public TagEditorGridTable TagEditorGridTable => tagEditorGridTable;
+
         public ILoggable Logger => logger;
 
-        public bool IsRunning
-        {
-            get => isRunning;
-
-            set
-            {
-                isRunning = value;
-                NotifyPropertyChanged();
-                NotifyPropertyChanged(nameof(IsNotRunning));
-                CommandManager.InvalidateRequerySuggested();
-
-                if (IsRunning)
-                {
-                    saveCursor = Mouse.OverrideCursor;
-                    Mouse.OverrideCursor = Cursors.Wait;
-                    logger.Clear();
-                }
-                else
-                {
-                    Mouse.OverrideCursor = saveCursor;
-                }
-            }
-        }
-
-        public bool IsNotRunning => !IsRunning;
-
         public string Output => logger.Text;
-
-        public string Address
-        {
-            get => address;
-
-            set
-            {
-                address = value;
-                NotifyPropertyChanged();
-            }
-        }
 
         public ObservableCollection<DisplayStringViewModel> ScopeItems
         {
@@ -190,6 +164,78 @@ namespace VikingLogixUtility.ViewModels
             set => cancelRequested = value;
         }
 
+        public string Address
+        {
+            get => address;
+
+            set
+            {
+                address = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public bool IsRunning
+        {
+            get => isRunning;
+
+            set
+            {
+                isRunning = value;
+                NotifyPropertyChanged();
+                NotifyPropertyChanged(nameof(IsNotRunning));
+                CommandManager.InvalidateRequerySuggested();
+
+                if (IsRunning)
+                {
+                    saveCursor = Mouse.OverrideCursor;
+                    Mouse.OverrideCursor = Cursors.Wait;
+                    logger.Clear();
+                    ProgressBarValue = 0;
+                }
+                else
+                {
+                    Mouse.OverrideCursor = saveCursor;
+                    ProgressBarVisibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        public bool IsNotRunning => !IsRunning;
+
+        public int ProgressBarValue
+        {
+            get => progressBarValue;
+
+            set
+            {
+                progressBarValue = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public Visibility ProgressBarVisibility
+        {
+            get => progressBarVisibility;
+
+            set
+            {
+                progressBarVisibility = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int ProgressBarMaximum
+        {
+            get => progressBarMaximum;
+
+            set
+            {
+                progressBarMaximum = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public async void LoadScopes()
         {
             if (IsRunning)
@@ -214,37 +260,6 @@ namespace VikingLogixUtility.ViewModels
             logger.Log("Done.");
 
             IsRunning = false;
-        }
-
-        public void LoadUdts()
-        {
-            UdtItems.Clear();
-            ParameterItems.Clear();
-
-            if (plcInfo is null ||
-                scopeSelectedItem is null)
-                return;
-
-            foreach (var udt in plcInfo.GetTemplateNamesFor(scopeSelectedItem.Name))
-                UdtItems.Add(new DisplayStringViewModel(udt));
-
-            UdtItems = UdtItems.Sort();
-        }
-
-        public void LoadParameters()
-        {
-            ClearTagEditor();
-            ParameterItems.Clear();
-
-            if (plcInfo is null ||
-                ScopeSelectedItem is null ||
-                UdtSelectedItem is null)
-                return;
-
-            foreach (var parameter in plcInfo.GetFieldNamesFor(ScopeSelectedItem.Name, UdtSelectedItem.Name))
-                ParameterItems.Add(new DisplayStringViewModel(parameter));
-
-            ParameterItems = ParameterItems.Sort();
         }
 
         public async void LoadTagEditor()
@@ -289,7 +304,9 @@ namespace VikingLogixUtility.ViewModels
             {
                 try
                 {
+                    logger.Log("Writing tags...");
                     WriteTagsBackground();
+                    logger.Log("Loading tag editor...");
                     LoadTagEditorBackground(FilterText);
                 }
                 catch (Exception ex)
@@ -298,14 +315,47 @@ namespace VikingLogixUtility.ViewModels
                 }
             });
 
+            logger.Log("Done.");
+
             IsRunning = false;
+        }
+
+        public void LoadUdts()
+        {
+            UdtItems.Clear();
+            ParameterItems.Clear();
+
+            if (PlcInfo is null ||
+                ScopeSelectedItem is null)
+                return;
+
+            foreach (var udt in PlcInfo.GetTemplateNamesFor(ScopeSelectedItem.Name))
+                UdtItems.Add(new DisplayStringViewModel(udt));
+
+            UdtItems = UdtItems.Sort();
+        }
+
+        public void LoadParameters()
+        {
+            ClearTagEditor();
+            ParameterItems.Clear();
+
+            if (PlcInfo is null ||
+                ScopeSelectedItem is null ||
+                UdtSelectedItem is null)
+                return;
+
+            foreach (var parameter in PlcInfo.GetFieldNamesFor(ScopeSelectedItem.Name, UdtSelectedItem.Name))
+                ParameterItems.Add(new DisplayStringViewModel(parameter));
+
+            ParameterItems = ParameterItems.Sort();
         }
 
         public void FilterTags() => TagEditorGridTable.Filter(FilterText);
 
         private void LoadScopesBackground()
         {
-            using var listing = TagListing.Create(logger, new TagPath(Address));
+            using var listing = TagListing.Create(new TagPath(Address), logger);
 
             if (listing is null)
                 return;
@@ -313,20 +363,20 @@ namespace VikingLogixUtility.ViewModels
             if (Cancel())
                 return;
 
-            plcInfo = PlcInfo.Build(logger, listing, Cancel);
+            plcInfo = PlcInfo.Build(listing, logger, Cancel);
 
-            if (plcInfo is null)
+            if (PlcInfo is null)
                 return;
 
             App.Current.Dispatcher.Invoke(() =>
                 ScopeItems.Add(new DisplayStringViewModel(Constants.Controller)));
 
-            foreach (var programName in plcInfo.ProgramNames)
+            foreach (var programName in PlcInfo.ProgramNames)
                 App.Current.Dispatcher.Invoke(() =>
                     ScopeItems.Add(new DisplayStringViewModel(programName)));
         }
 
-        private bool Cancel()
+        public bool Cancel()
         {
             if (CancelRequested)
             {
@@ -340,95 +390,12 @@ namespace VikingLogixUtility.ViewModels
             return false;
         }
 
-        private void LoadTagEditorBackground(string? filterText = null)
-        {
-            if (plcInfo is null)
-                return;
-
-            if (ScopeSelectedItem is null)
-                return;
-
-            if (UdtSelectedItem is null)
-                return;
-
-            if (ParameterSelectedItems is null || !ParameterSelectedItems.Any())
-                return;
-
-            ClearTagEditor();
-
-            App.Current.Dispatcher.Invoke(() =>
-                TagEditorGridTable.SetColumns([.. ParameterSelectedItems.Select(p => p.Name)]));
-
-            var tagNames = plcInfo.GetTagNamesFor(ScopeSelectedItem.Name, UdtSelectedItem.Name);
-
-            foreach (var tagName in tagNames)
-            {
-                if (Cancel())
-                    return;
-
-                var tagValues = new List<string>();
-
-                foreach (var parameterSelectedItem in ParameterSelectedItems)
-                {
-                    var tag = plcInfo.GetTag(
-                        logger, ScopeSelectedItem.Name, tagName, UdtSelectedItem.Name, parameterSelectedItem.Name);
-
-                    //if (tag is TagReadonly)
-                    //    continue;
-
-                    tagValues.Add(tag?.Value ?? "[ERROR]");
-                }
-
-                App.Current.Dispatcher.Invoke(() =>
-                    TagEditorGridTable.AddRow(tagName, [.. tagValues]));
-            }
-
-            if (filterText is not null)
-            {
-                FilterText = filterText;
-
-                App.Current.Dispatcher.Invoke(() =>
-                    TagEditorGridTable.Filter(FilterText));
-            }
-        }
-
-        private void ClearTagEditor()
+        public void ClearTagEditor()
         {
             FilterText = string.Empty;
 
             App.Current.Dispatcher.Invoke(() =>
                 TagEditorGridTable.Clear());
-        }
-
-        private void WriteTagsBackground()
-        {
-            if (plcInfo is null)
-                return;
-
-            if (ScopeSelectedItem is null)
-                return;
-
-            if (UdtSelectedItem is null)
-                return;
-
-            foreach (string columnName in TagEditorGridTable.WriteableColumnNames)
-            {
-                foreach (DataRowView row in TagEditorGridTable.VisibleRows)
-                {
-                    var tagName = row[Constants.TagName].ToString();
-
-                    if (string.IsNullOrWhiteSpace(tagName))
-                        continue;
-
-                    var writeValue = row[columnName].ToString();
-
-                    if (string.IsNullOrWhiteSpace(writeValue))
-                        continue;
-
-                    plcInfo.GetTag(logger, ScopeSelectedItem.Name, tagName, UdtSelectedItem.Name, TagEditorGridTable.GetRawColumnName(columnName))?
-                        .Write(logger, writeValue);
-                }
-            }
         }
 
         public void ExportTags()
@@ -455,6 +422,48 @@ namespace VikingLogixUtility.ViewModels
             logger.Log($"Exported to: {sfd.FileName}");
 
             IsRunning = false;
+        }
+
+        private void LoadTagEditorBackground(string? filterText = null)
+        {
+            tagProcessor.Read(this);
+
+            if (filterText is not null)
+            {
+                FilterText = filterText;
+
+                App.Current.Dispatcher.Invoke(() =>
+                    TagEditorGridTable.Filter(FilterText));
+            }
+        }
+
+        private void WriteTagsBackground()
+        {
+            ProgressBarMaximum =
+                TagEditorGridTable.WriteableColumnNames.Count() *
+                TagEditorGridTable.VisibleRows.Count();
+
+            ProgressBarVisibility = Visibility.Visible;
+
+            foreach (string columnName in TagEditorGridTable.WriteableColumnNames)
+            {
+                foreach (DataRowView row in TagEditorGridTable.VisibleRows)
+                {
+                    ++ProgressBarValue;
+
+                    var tagName = row[Constants.TagName].ToString();
+
+                    if (string.IsNullOrWhiteSpace(tagName))
+                        continue;
+
+                    var writeValue = row[columnName].ToString();
+
+                    if (string.IsNullOrWhiteSpace(writeValue))
+                        continue;
+
+                    tagProcessor.Write(this, tagName, columnName, writeValue);
+                }
+            }
         }
     }
 }

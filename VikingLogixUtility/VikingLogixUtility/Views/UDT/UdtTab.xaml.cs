@@ -32,7 +32,7 @@ namespace VikingLogixUtility.Views.UDT
 
         private void WindowClosing(object? sender, CancelEventArgs e)
         {
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             vm.Dispose();

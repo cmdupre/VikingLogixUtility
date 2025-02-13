@@ -18,9 +18,9 @@ namespace VikingLibPlcTagNet.Data
 
         public void Dispose() => tag.Dispose();
 
-        public static TagListing? Create(ILoggable logger, TagPath path, string name = "@tags")
+        public static TagListing? Create(TagPath path, ILoggable? logger = null, string name = "@tags")
         {
-            var tag = TagFactory.GetTagFor(logger, null, path, name);
+            var tag = TagFactory.GetTagFor(null, path, name, logger);
 
             if (tag is null)
                 return null;
@@ -29,6 +29,7 @@ namespace VikingLibPlcTagNet.Data
 
             if (payloadSize < 4)
             {
+                logger?.Log("Unexpected payload size.");
                 tag.Dispose();
                 return null;
             }
@@ -36,8 +37,8 @@ namespace VikingLibPlcTagNet.Data
             return new TagListing(tag, payloadSize);
         }
 
-        public static TagListing? CreateForProgram(ILoggable logger, TagPath path, string name) =>
-            Create(logger, path, $"Program:{name}.@tags");
+        public static TagListing? CreateForProgram(TagPath path, string name, ILoggable? logger = null) =>
+            Create(path, logger, $"Program:{name}.@tags");
 
         public int Id => tag.Id;
 

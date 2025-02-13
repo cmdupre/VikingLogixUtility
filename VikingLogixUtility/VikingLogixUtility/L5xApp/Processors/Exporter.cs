@@ -1,8 +1,8 @@
 ﻿using ClosedXML.Excel;
 using L5Sharp.Core;
 using System.Data;
-using VikingLogixUtility.Common;
 using VikingLogixUtility.Extensions;
+using VikingLogixUtility.L5xApp.Extensions;
 using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.Models;
 
@@ -20,7 +20,7 @@ namespace VikingLogixUtility.L5xApp.Processors
 
             var content = L5X.Load(viewModel.L5XFilenameToolTip);
 
-            var mapping = Helper.GetMappingRungs(content);
+            var mapping = content.GetMappingRungs();
 
             var exportTable = ExportTable.Create();
 

@@ -32,7 +32,7 @@ namespace VikingLogixUtility.Views.PDT
 
         private void WindowClosing(object? sender, CancelEventArgs e)
         {
-            if (DataContext is not PdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             vm.Dispose();

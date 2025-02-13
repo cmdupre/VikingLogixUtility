@@ -38,6 +38,9 @@ namespace VikingLibPlcTagNet.Data
         public TagInfo WithProgramName(string programName) =>
             new(Path, Id, Type, ElementLength, ArrayDims, Name, programName);
 
+        public TagInfo WithNewName(string name) =>
+            new(Path, Id, Type, ElementLength, ArrayDims, name, ProgramName);
+
         public TagPath Path => path;
 
         public uint Id => id;
@@ -54,7 +57,10 @@ namespace VikingLibPlcTagNet.Data
             ? (ushort)((ushort)Type & BitMasks.UdtId)
             : default;
 
-        public bool IsUdt => ((ushort)type & BitMasks.StructBit) > 0;
+        // STRING is UDT for PLC, not for this application.
+        public bool IsUdt =>
+            type != DataTypes.STRING &&
+            ((ushort)type & BitMasks.StructBit) > 0;
 
         public ushort ElementLength => elementLength;
 
@@ -66,9 +72,13 @@ namespace VikingLibPlcTagNet.Data
 
         public uint GetElementCount()
         {
-            // TODO: Untested code from list tags example.
+            if (NumberDimensions < 1)
+                return 1;
 
-            uint count = 1;
+            if (Type == DataTypes.DWORD_ARRAY)
+                return 32;
+
+            uint count = 0;
 
             for (int i = 0; i < NumberDimensions; i++)
                 count += arrayDims[i];

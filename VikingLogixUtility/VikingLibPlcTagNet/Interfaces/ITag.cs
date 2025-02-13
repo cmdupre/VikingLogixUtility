@@ -10,8 +10,8 @@ namespace VikingLibPlcTagNet.Interfaces
         string? Value { get; }
         string? PreviousValue { get; }
         bool Changed { get; }
-        void Write(ILoggable logger, string value);
-        void Read(ILoggable logger);
+        void Write(string value, ILoggable logger);
+        void Read(ILoggable? logger);
         void Toggle(ILoggable logger);
     }
 }

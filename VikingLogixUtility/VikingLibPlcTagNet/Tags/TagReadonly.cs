@@ -19,13 +19,13 @@ namespace VikingLibPlcTagNet.Tags
 
         public void Dispose() => plctag.plc_tag_destroy(Id);
 
-        internal static TagReadonly? Create(ILoggable logger, TagPath path, string name)
+        internal static TagReadonly? Create(TagPath path, string name, ILoggable? logger = null)
         {
             var id = plctag.plc_tag_create(path.WithFqn(name), path.Timeout);
 
             if (id < 0)
             {
-                logger.Log($"{plctag.plc_tag_decode_error(id)} ({name})");
+                logger?.Log($"{plctag.plc_tag_decode_error(id)} ({name})");
                 return null;
             }
 
@@ -33,24 +33,24 @@ namespace VikingLibPlcTagNet.Tags
 
             if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
             {
-                logger.Log(plctag.plc_tag_decode_error(result));
+                logger?.Log(plctag.plc_tag_decode_error(result));
                 return null;
             }
 
             return new TagReadonly(path, id, name);
         }
 
-        public void Write(ILoggable logger, string value)
+        public void Write(string value, ILoggable? logger = null)
         {
             // NOP.
         }
 
-        public void Read(ILoggable logger)
+        public void Read(ILoggable? logger = null)
         {
             // NOP.
         }
 
-        public void Toggle(ILoggable logger)
+        public void Toggle(ILoggable? logger = null)
         {
             // NOP.
         }

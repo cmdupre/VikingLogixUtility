@@ -13,8 +13,6 @@
         ULINT = 0xC9,
         REAL = 0xCA,
         LREAL = 0xCB,
-        // TODO: string is showing up as type 0x8fce in testing.
-        //STRING = 0xD0,
         STRING = 0x8FCE,
         TIME = 0xD7,
         //LTIME = 0xDF,
@@ -24,7 +22,8 @@
         //DATE_AND_TIME = 0xCF,
         //BYTE = 0xD1,
         //WORD = 0xD2,
-        //DWORD = 0xD3,
+        DWORD = 0xD3,
+        DWORD_ARRAY = 0x20D3,
         //LWORD = 0xD4,
         //STRING2 = 0xD5,
         //FTIME = 0xD6,

@@ -17,7 +17,7 @@ namespace VikingLogixUtility.Views.PDT
         {
             e.Handled = true;
 
-            if (DataContext is not PdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             vm.ScopeItems.Clear();

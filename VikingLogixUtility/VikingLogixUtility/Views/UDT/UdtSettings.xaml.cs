@@ -17,7 +17,7 @@ namespace VikingLogixUtility.Views.UDT
         {
             e.Handled = true;
 
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             vm.ScopeItems.Clear();

@@ -6,7 +6,7 @@ namespace VikingLogixUtility.ViewModels
 {
     internal sealed class MainWindowViewModel : BaseNotifyPropertyChanged
     {
-        public MainWindowViewModel(UdtTabViewModel udtTabVM, PdtTabViewModel pdtTabVM, L5xTagExportViewModel lL5xTagExportVM)
+        public MainWindowViewModel(TagEditorViewModel udtTabVM, TagEditorViewModel pdtTabVM, L5xTagExportViewModel lL5xTagExportVM)
         {
             UdtTabVM = udtTabVM;
             PdtTabVM = pdtTabVM;
@@ -17,8 +17,8 @@ namespace VikingLogixUtility.ViewModels
             L5xTagExportVM.PropertyChanged += Child_PropertyChanged;
         }
 
-        public UdtTabViewModel UdtTabVM { get; }
-        public PdtTabViewModel PdtTabVM { get; }
+        public TagEditorViewModel UdtTabVM { get; }
+        public TagEditorViewModel PdtTabVM { get; }
         public L5xTagExportViewModel L5xTagExportVM { get; }
 
         public bool IsRunning =>

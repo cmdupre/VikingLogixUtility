@@ -18,7 +18,7 @@ namespace VikingLogixUtility.Views.UDT
         {
             e.Handled = true;
 
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             if (vm.ScopeItemsSelectionChanged.CanExecute(null))
@@ -29,7 +29,7 @@ namespace VikingLogixUtility.Views.UDT
         {
             e.Handled = true;
 
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             if (vm.UdtItemsSelectionChanged.CanExecute(null))
@@ -40,7 +40,7 @@ namespace VikingLogixUtility.Views.UDT
         {
             e.Handled = true;
 
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             if (sender is not ListBox lb)
@@ -69,7 +69,7 @@ namespace VikingLogixUtility.Views.UDT
         {
             e.Handled = true;
 
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             vm.FilterTags();

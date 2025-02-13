@@ -29,7 +29,7 @@ namespace VikingLibPlcTagNet.Data
             this.templateInfos = templateInfos;
         }
 
-        public static PlcInfo? Build(ILoggable logger, TagListing tagListing, Func<bool>? cancellationToken = null)
+        public static PlcInfo? Build(TagListing tagListing, ILoggable? logger = null, Func<bool>? cancellationToken = null)
         {
             List<TagInfo> tagInfos = [];
             List<ushort> templateIds = [];
@@ -68,7 +68,10 @@ namespace VikingLibPlcTagNet.Data
                 var result = plctag.plc_tag_get_string(tagListing.Id, offset, name, nameLength);
 
                 if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-                    name = new StringBuilder(plctag.plc_tag_decode_error(result));
+                {
+                    name = new StringBuilder("[ERROR]");
+                    logger?.Log(plctag.plc_tag_decode_error(result));
+                }
 
                 offset += plctag.plc_tag_get_string_total_length(tagListing.Id, offset);
 
@@ -84,11 +87,62 @@ namespace VikingLibPlcTagNet.Data
 
                 var tagInfo = TagInfo.Create(tagListing.Path, id, (DataTypes)type, elementLength, arrayDims, name);
 
+                if (tagInfo.Type == DataTypes.STRING)
+                {
+                    //todo allow strings
+                    //tagInfos.Add(tagInfo.WithNewName($"{name}.DATA"));
+                    continue;
+                }
+
+                if (tagInfo.NumberDimensions > 1)
+                {
+                    logger?.Log($"Skipping array of more than one dimension ({tagInfo.NumberDimensions}, {tagInfo.Name}).");
+                    continue;
+                }
+
+                if (tagInfo.NumberDimensions == 1)
+                {
+                    // get element type
+                    var arrayTagId = plctag.plc_tag_create(tagListing.Path.WithFqn(tagInfo.Name), tagListing.Path.Timeout);
+                    var buffer = new byte[2];
+                    plctag.plc_tag_get_byte_array_attribute(arrayTagId, "raw_tag_type_bytes", buffer, buffer.Length);
+                    plctag.plc_tag_destroy(arrayTagId);
+
+                    if (!Helper.TryGetDataType(buffer[0], out var arrayDataType))
+                    {
+                        // this is probably an array of udt?
+                        // the specific example found  is FO_MessageList; an array of strings. Strings are structures of LEN and DATA.
+                        if (buffer[0] != 0)
+                            logger?.Log($"Skipping array of unknown element data type ({buffer[0]}, {tagInfo.Name})");
+
+                        continue;
+                    }
+
+                    // save tags using array tag element length (count)
+                    for (var i = 0; i < elementLength; i++)
+                    {
+                        var elementName = $"{tagInfo.Name}[{i}]";
+                        var elementType = (DataTypes)buffer[0];
+
+                        // this is BOOL array, stored in PLC as bits of DWORD
+                        if (arrayDataType == DataTypes.DWORD)
+                        {
+                            elementName = $"{tagInfo.Name}.{i}";
+                            elementType = DataTypes.BOOL;
+                        }
+
+                        tagInfos.Add(
+                            TagInfo.Create(
+                                tagListing.Path, (uint)arrayTagId, elementType, 1, [], elementName));
+                    }
+
+                    continue;
+                }
+
                 tagInfos.Add(tagInfo);
 
-                // TODO: allow strings.
                 // Save template ids for further processing.
-                if (tagInfo.IsUdt && tagInfo.Type != DataTypes.STRING)
+                if (tagInfo.IsUdt)
                     templateIds.Add(tagInfo.TemplateId);
             }
 
@@ -101,7 +155,7 @@ namespace VikingLibPlcTagNet.Data
                 if (cancellationToken is not null && cancellationToken())
                     return null;
 
-                using var templateInfo = TagFactory.GetTagFor(logger, null, tagListing.Path, $"@udt/{id}");
+                using var templateInfo = TagFactory.GetTagFor(null, tagListing.Path, $"@udt/{id}", logger);
 
                 if (templateInfo is null)
                     continue;
@@ -121,8 +175,8 @@ namespace VikingLibPlcTagNet.Data
                 // Sanity check.
                 if (templateId != id)
                 {
-                    logger.Log("ID mismatch while reading UDT information.");
-                    continue;
+                    logger?.Log("ID mismatch while reading UDT information.");
+                    return null;
                 }
 
                 // Skip past this header.
@@ -169,7 +223,10 @@ namespace VikingLibPlcTagNet.Data
                 var result = plctag.plc_tag_get_string(templateInfo.Id, offset, name, nameLength);
 
                 if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-                    name = new StringBuilder(plctag.plc_tag_decode_error(result));
+                {
+                    name = new StringBuilder("[ERROR];");
+                    logger?.Log(plctag.plc_tag_decode_error(result));
+                }
 
                 string udtName = name
                     .ToString()
@@ -189,7 +246,7 @@ namespace VikingLibPlcTagNet.Data
 
                     if (offset >= tagSize)
                     {
-                        logger.Log("Refusing to read past tag size.");
+                        logger?.Log("Refusing to read past tag size.");
                         break;
                     }
 
@@ -206,7 +263,10 @@ namespace VikingLibPlcTagNet.Data
                     result = plctag.plc_tag_get_string(templateInfo.Id, offset, name, nameLength + 1);
 
                     if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-                        name = new StringBuilder(plctag.plc_tag_decode_error(result));
+                    {
+                        name = new StringBuilder("[ERROR]");
+                        logger?.Log(plctag.plc_tag_decode_error(result));
+                    }
 
                     if (!name.ToString().StartsWith("__"))
                         fieldsWithNames.Add(field.WithName(name));
@@ -234,12 +294,12 @@ namespace VikingLibPlcTagNet.Data
                 if (cancellationToken is not null && cancellationToken())
                     return null;
 
-                using var programTagListing = TagListing.CreateForProgram(logger, tagListing.Path, programName);
+                using var programTagListing = TagListing.CreateForProgram(tagListing.Path, programName, logger);
 
                 if (programTagListing is null)
                     continue;
 
-                var programInfo = Build(logger, programTagListing, cancellationToken);
+                var programInfo = Build(programTagListing, logger, cancellationToken);
 
                 if (programInfo is null)
                     return null;
@@ -291,26 +351,22 @@ namespace VikingLibPlcTagNet.Data
                 .Select(t => t.TemplateId)
                 .SingleOrDefault();
 
-            var tags = Tags
+            return Tags
                 .Where(t => t.IsUdt)
                 .Where(t => t.ProgramName == programName)
-                .Where(t => t.TemplateId == templateId);
-
-            foreach (var tag in tags)
-                yield return tag.Name;
+                .Where(t => t.TemplateId == templateId)
+                .Select(t => t.Name);
         }
 
         public IEnumerable<string> GetTagNamesFor(string programName)
         {
-            var tags = Tags
+            return Tags
                 .Where(t => !t.IsUdt)
-                .Where(t => t.ProgramName == programName);
-
-            foreach (var tag in tags)
-                yield return tag.Name;
+                .Where(t => t.ProgramName == programName)
+                .Select(t => t.Name);
         }
 
-        public ITag? GetTag(ILoggable logger, string programName, string tagName, string? templateName = null, string? parameterName = null)
+        public ITag? GetTag(string programName, string tagName, string? templateName = null, string? parameterName = null, ILoggable? logger = null)
         {
             var udtRequired = templateName is not null && parameterName is not null;
 
@@ -359,10 +415,10 @@ namespace VikingLibPlcTagNet.Data
                 fqn = $"{fqn}.{parameterName}";
             }
 
-            return GetCachedOrNewTag(logger, dataType, tagInfo.Path, fqn);
+            return GetCachedOrNewTag(dataType, tagInfo.Path, fqn, logger);
         }
 
-        private ITag? GetCachedOrNewTag(ILoggable logger, DataTypes type, TagPath path, string fqn)
+        private ITag? GetCachedOrNewTag(DataTypes type, TagPath path, string fqn, ILoggable? logger = null)
         {
             if (tagCache.TryGetValue(fqn, out var tag))
             {
@@ -370,7 +426,7 @@ namespace VikingLibPlcTagNet.Data
                 return tag;
             }
 
-            var newTag = TagFactory.GetTagFor(logger, type, path, fqn);
+            var newTag = TagFactory.GetTagFor(type, path, fqn, logger);
 
             if (newTag is null)
                 return null;

@@ -1,17 +1,17 @@
 ﻿using L5Sharp.Core;
-using VikingLogixUtility.Common;
+using VikingLogixUtility.L5xApp.Extensions;
 
-namespace VikingLogixUtilityTests.Common
+namespace VikingLogixUtilityTests.L5xApp.Extensions
 {
     [TestFixture]
-    internal class HelperFixture
+    internal class L5xExtensionsFixture
     {
         [Test]
         public void TestGetMappingRungs()
         {
             var content = L5X.Load("../../../L5xApp/Resources/Test.L5X");
 
-            var mapping = Helper.GetMappingRungs(content);
+            var mapping = content.GetMappingRungs();
 
             Assert.Multiple(() =>
             {

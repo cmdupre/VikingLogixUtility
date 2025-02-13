@@ -16,7 +16,7 @@ namespace VikingLogixUtility.Views.UDT
 
         private void ViewDataGrid_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            if (DataContext is not UdtTabViewModel vm)
+            if (DataContext is not TagEditorViewModel vm)
                 return;
 
             if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control)

@@ -1,6 +1,6 @@
 ﻿using L5Sharp.Core;
 using System.Collections.ObjectModel;
-using VikingLogixUtility.Common;
+using VikingLogixUtility.L5xApp.Extensions;
 using VikingLogixUtility.L5xApp.Interfaces;
 using VikingLogixUtility.L5xApp.Models;
 using VikingLogixUtility.L5xApp.Processors;
@@ -19,7 +19,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             var content = L5X.Load("../../../L5xApp/Resources/Test.L5X");
             var et = ExportTable.Create();
 
-            TagWriter.Geaux(vm, et, Helper.GetMappingRungs(content), content.Controller.Name, content.Tags);
+            TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
             Assert.Multiple(() =>
             {
@@ -57,7 +57,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             var et = ExportTable.Create();
             var content = L5X.Load("../../../L5xApp/Resources/Test.L5X");
 
-            TagWriter.Geaux(vm, et, Helper.GetMappingRungs(content), content.Controller.Name, content.Tags);
+            TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
             Assert.Multiple(() =>
             {
@@ -80,7 +80,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             var vm = new FakeViewModel();
             var et = ExportTable.Create();
 
-            TagWriter.Geaux(vm, et, Helper.GetMappingRungs(content), content.Controller.Name, content.Tags);
+            TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
             Assert.Multiple(() =>
             {
@@ -105,7 +105,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             var vm = new FakeViewModel();
             var et = ExportTable.Create();
 
-            TagWriter.Geaux(vm, et, Helper.GetMappingRungs(content), content.Controller.Name, content.Tags);
+            TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
             Assert.Multiple(() =>
             {
@@ -124,7 +124,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
             var vm = new FakeViewModel();
             var et = ExportTable.Create();
 
-            TagWriter.Geaux(vm, et, Helper.GetMappingRungs(content), content.Controller.Name, content.Tags);
+            TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
             Assert.Multiple(() =>
             {

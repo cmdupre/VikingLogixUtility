@@ -20,7 +20,7 @@ namespace VikingLibPlcTagNet.Data
 
         public bool AllChanged => !NotChanged.Any();
 
-        public void ReadAllTags(ILoggable logger)
+        public void ReadAllTags(ILoggable? logger = null)
         {
             foreach (var tag in tags)
                 tag.Read(logger);

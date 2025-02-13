@@ -6,11 +6,28 @@
              xmlns:local="clr-namespace:VikingLogixUtility.Views.PDT"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <GroupBox 
+    <GroupBox
         BorderThickness="0">
-        <DataGrid
-            Name="ViewDataGrid"
-            IsEnabled="{Binding IsNotRunning}"
-            PreviewKeyDown="ViewDataGrid_PreviewKeyDown"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <ProgressBar
+                Grid.Row="0"
+                Height="10px"
+                Visibility="{Binding ProgressBarVisibility}"
+                Value="{Binding ProgressBarValue}"
+                Maximum="{Binding ProgressBarMaximum}"
+                />
+            <DataGrid
+                Grid.Row="1"
+                Name="ViewDataGrid"
+                IsEnabled="{Binding IsNotRunning}"
+                PreviewKeyDown="ViewDataGrid_PreviewKeyDown"/>
+        </Grid>
     </GroupBox>
 </UserControl>
