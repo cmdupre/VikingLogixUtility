@@ -10,17 +10,19 @@ namespace VikingLogixUtilityTests.Extensions
         [TestCase("Testing", "Testing.xlsx")]
         [TestCase("", ".xlsx")]
         [TestCase(" ", " .xlsx")]
-        public void GetsFilenameWithXlsxExtension(string input, string expected)
-        {
+        public void GetsFilenameWithXlsxExtension(string input, string expected) =>
             Assert.That(input.WithXlsxExtension(), Is.EqualTo(expected));
-        }
 
         [TestCase("", "")]
         [TestCase("Test__Column (W) ", "Test_Column")]
         [TestCase("Test__Column (R) ", "Test_Column")]
-        public void GetsRawColumnName(string input, string expected)
-        {
+        public void GetsRawColumnName(string input, string expected) =>
             Assert.That(input.Raw, Is.EqualTo(expected));
-        }
+
+        [TestCase(" T ESTING", "TESTING")]
+        [TestCase(@"`~!@#$%^&*()_=-+,<.>/?|\;:'", "_-")]
+        [TestCase(" 0 a B ", "0aB")]
+        public void GetSanitizedFilterText(string input, string expected) =>
+            Assert.That(input.SanitizeFilterText(), Is.EqualTo(expected));
     }
 }

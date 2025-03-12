@@ -1,4 +1,5 @@
 ﻿using libplctag.NativeImport;
+using VikingLibPlcTagNet.Common;
 using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 using VikingLibPlcTagNet.Tags;
@@ -29,7 +30,7 @@ namespace VikingLibPlcTagNet.Data
 
             if (payloadSize < 4)
             {
-                logger?.Log("Unexpected payload size.");
+                Helper.LogError(logger, "Unexpected payload size", [payloadSize]);
                 tag.Dispose();
                 return null;
             }

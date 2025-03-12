@@ -6,6 +6,17 @@ Initial Release: 1/9/2025
 
 *******************************************************************************
 
+Version 1.4.0, 3/17/2025, C. Dupre
+- Implement strings read/write.
+- Implement array of strings read/write.
+- Implement custom sorting for data grid control.
+- Improve tag filtering read/write operations.
+- Improve display of floating point values.
+- Hide nested UDTs in UI.
+- Bug fix when pasting to data grid control.
+- Bug fix for flaky progress bar.
+- Standardize error messages.
+
 Version 1.3.0, 2/27/2025, C. Dupre
 - Refactor.
 - Implement progress bar for read/write operations.

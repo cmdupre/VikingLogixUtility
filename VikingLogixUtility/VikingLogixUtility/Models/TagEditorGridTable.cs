@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.ComponentModel;
+using System.Data;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -6,6 +7,7 @@ using System.Windows.Media;
 using VikingLibPlcTagNet.Interfaces;
 using VikingLogixUtility.Common;
 using VikingLogixUtility.Extensions;
+using VikingLogixUtility.ViewModels;
 
 namespace VikingLogixUtility.Models
 {
@@ -31,6 +33,7 @@ namespace VikingLogixUtility.Models
             grid.EnableColumnVirtualization = true;
             grid.EnableRowVirtualization = true;
             grid.FrozenColumnCount = 2;
+            grid.Sorting += Grid_Sorting;
 
             SetColumns(Constants.Value);
         }
@@ -182,21 +185,28 @@ namespace VikingLogixUtility.Models
                 .Split('\n');
 
             var rowIndex = grid.Items.IndexOf(grid.SelectedCells[0].Item);
-            var columnIndex = grid.SelectedCells[0].Column.DisplayIndex;
 
             foreach (var line in lines)
             {
                 var cells = line.Split('\t');
-                var offset = 0;
-                for (var cellsIndex = 0; cellsIndex < cells.Length; ++cellsIndex, ++offset)
+                var cellsIndex = 0;
+                var columnIndex = grid.SelectedCells[0].Column.DisplayIndex;
+
+                while (cellsIndex < cells.Length)
                 {
-                    while (grid.Columns[columnIndex + offset].IsReadOnly)
-                        ++offset;
+                    if (columnIndex >= grid.Columns.Count)
+                        break;
 
-                    if ((columnIndex + offset) >= table.Columns.Count)
+                    if (grid.Columns[columnIndex].IsReadOnly)
+                    {
+                        ++columnIndex;
                         continue;
+                    }
 
-                    table.Rows[rowIndexXrf[rowIndex]][columnIndex + offset] = cells[cellsIndex];
+                    table.Rows[rowIndexXrf[rowIndex]][columnIndex] = cells[cellsIndex];
+
+                    ++cellsIndex;
+                    ++columnIndex;
                 }
 
                 ++rowIndex;
@@ -206,20 +216,8 @@ namespace VikingLogixUtility.Models
             }
         }
 
-        public void Filter(string tagNameFilter)
-        {
-            var sb = new StringBuilder();
-            foreach (var c in tagNameFilter)
-                if ((c >= 'A' && c <= 'Z') ||
-                    (c >= 'a' && c <= 'z') ||
-                    (c >= '0' && c <= '9') ||
-                    (c == '-') ||
-                    (c == '_'))
-                    sb.Append(c);
-
-            var filter = $"[{Constants.TagName}] LIKE '%{sb}%'";
-            RefreshGrid(filter);
-        }
+        public void Filter(string tagNameFilter) =>
+            RefreshGrid($"[{Constants.TagName}] LIKE '%{tagNameFilter}%'");
 
         /// <summary>
         /// Gets the filtered view table for export.
@@ -295,6 +293,49 @@ namespace VikingLogixUtility.Models
 
             grid.ItemsSource = null;
             grid.ItemsSource = view;
+        }
+
+        private void Grid_Sorting(object sender, DataGridSortingEventArgs e)
+        {
+            if (table is null)
+                return;
+
+            var sortDirection = e.Column.SortDirection == ListSortDirection.Ascending
+                ? ListSortDirection.Descending
+                : ListSortDirection.Ascending;
+
+            var rows = table
+                .AsEnumerable()
+                .ToList();
+
+            IEnumerable<DataRow> orderedRows;
+
+            if (sortDirection == ListSortDirection.Ascending)
+            {
+                orderedRows = rows
+                    .OrderBy(dataRow =>
+                    new DisplayStringViewModel(dataRow.Field<string>(e.Column.SortMemberPath) ?? string.Empty));
+            }
+            else
+            {
+                orderedRows = rows
+                    .OrderByDescending(dataRow =>
+                    new DisplayStringViewModel(dataRow.Field<string>(e.Column.SortMemberPath) ?? string.Empty));
+            }
+
+            var orderedTable = table.Clone();
+
+            foreach (var orderedRow in orderedRows)
+                orderedTable.ImportRow(orderedRow);
+
+            grid.ItemsSource = null;
+            grid.ItemsSource = orderedTable.DefaultView;
+
+            grid.Columns
+                .First(c => c.SortMemberPath == e.Column.SortMemberPath)
+                .SortDirection = sortDirection;
+
+            e.Handled = true;
         }
     }
 }

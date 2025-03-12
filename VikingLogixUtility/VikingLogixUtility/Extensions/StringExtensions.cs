@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Text;
 using VikingLogixUtility.Common;
 
 namespace VikingLogixUtility.Extensions
@@ -30,5 +31,19 @@ namespace VikingLogixUtility.Extensions
             .Replace(Constants.Read, "")
             .Replace(Constants.Write, "")
             .TrimEnd();
+
+        public static string SanitizeFilterText(this string s)
+        {
+            var sb = new StringBuilder();
+            foreach (var c in s)
+                if ((c >= 'A' && c <= 'Z') ||
+                    (c >= 'a' && c <= 'z') ||
+                    (c >= '0' && c <= '9') ||
+                    (c == '-') ||
+                    (c == '_'))
+                    sb.Append(c);
+
+            return sb.ToString();
+        }
     }
 }

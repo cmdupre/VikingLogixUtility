@@ -1,4 +1,6 @@
 ﻿using libplctag.NativeImport;
+using System.Text;
+using VikingLibPlcTagNet.Common;
 using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 
@@ -32,11 +34,11 @@ namespace VikingLibPlcTagNet.Tags
 
             if (id < 0)
             {
-                logger?.Log($"{plctag.plc_tag_decode_error(id)} ({fqn})");
+                Helper.LogError(logger, "Error creating tag", [fqn], id);
                 return null;
             }
 
-            var value = Read(id, path.Timeout, logger);
+            var value = Read(id, path, fqn, logger);
 
             if (value is null)
             {
@@ -58,7 +60,24 @@ namespace VikingLibPlcTagNet.Tags
 
         public string Value
         {
-            get => currentValue;
+            get
+            {
+                // make it clear to user if type is floating point
+                if (typeof(T) == typeof(float) || typeof(T) == typeof(double))
+                {
+                    if (double.TryParse(currentValue, out var currentValueDouble))
+                    {
+                        var formattedValue = currentValueDouble.ToString("G");
+
+                        if (!formattedValue.Contains('.'))
+                            formattedValue += ".0";
+
+                        return formattedValue;
+                    }
+                }
+
+                return currentValue;
+            }
 
             private set
             {
@@ -114,13 +133,12 @@ namespace VikingLibPlcTagNet.Tags
             else if (typeof(T) == typeof(DateTime))
                 plctag.plc_tag_set_int32(Id, 0, Int32.Parse(value));
 
-            // TODO: allow strings.
-            //else if (typeof(T) == typeof(string))
-            //    plctag.plc_tag_set_string(Id, 0, value);
+            else if (typeof(T) == typeof(string))
+                plctag.plc_tag_set_string(Id, 0, value);
 
             else
             {
-                logger?.Log("Data type not recognized.");
+                Helper.LogError(logger, "Data type not recognized", [typeof(T)]);
                 return;
             }
 
@@ -130,26 +148,26 @@ namespace VikingLibPlcTagNet.Tags
         }
 
         public void Read(ILoggable? logger = null) =>
-            Value = Read(Id, Path.Timeout, logger);
+            Value = Read(Id, Path, FQN, logger);
 
         public void Toggle(ILoggable? logger = null)
         {
             if (typeof(T) != typeof(bool))
             {
-                logger?.Log($"Not valid for data type {typeof(T)}.");
+                Helper.LogError(logger, "Not valid for data type", [typeof(T)]);
                 return;
             }
 
             Write(Value == "1" ? "0" : "1", logger);
         }
 
-        private static string Read(int id, int timeout, ILoggable? logger = null)
+        private static string Read(int id, TagPath path, string fqn, ILoggable? logger = null)
         {
-            var result = plctag.plc_tag_read(id, timeout);
+            var result = plctag.plc_tag_read(id, path.Timeout);
 
             if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
             {
-                logger?.Log(plctag.plc_tag_decode_error(result));
+                Helper.LogError(logger, "Error reading tag", [fqn], result);
                 return string.Empty;
             }
 
@@ -158,6 +176,9 @@ namespace VikingLibPlcTagNet.Tags
 
             if (typeof(T) == typeof(sbyte))
                 return plctag.plc_tag_get_int8(id, 0).ToString();
+
+            if (typeof(T) == typeof(char))
+                return Convert.ToChar(plctag.plc_tag_get_int8(id, 0)).ToString();
 
             if (typeof(T) == typeof(short))
                 return plctag.plc_tag_get_int16(id, 0).ToString();
@@ -189,23 +210,23 @@ namespace VikingLibPlcTagNet.Tags
             if (typeof(T) == typeof(DateTime))
                 return plctag.plc_tag_get_int32(id, 0).ToString();
 
-            // todo allow strings
-            //if (typeof(T) == typeof(string))
-            //{
-            //    var sb = new StringBuilder();
+            if (typeof(T) == typeof(string))
+            {
+                // found this length by accident (trial/error) while looking at libplctag github issues
+                var length = plctag.plc_tag_get_int32(id, 0);
 
-            //    var getStringResult = plctag.plc_tag_get_string(id, 0, sb, sb.Length);
+                var sb = new StringBuilder(length);
 
-            //    if (getStringResult != (int)STATUS_CODES.PLCTAG_STATUS_OK)
-            //    {
-            //        logger?.Log(plctag.plc_tag_decode_error(getStringResult));
-            //        return string.Empty;
-            //    }
+                for (int i = 0; i < length; i++)
+                {
+                    var tag = TagFactory.GetTagFor(DataTypes.CHAR, path, $"{fqn}.DATA[{i}]", logger);
+                    sb.Append(tag?.Value);
+                }
 
-            //    return sb.ToString();
-            //}
+                return sb.ToString();
+            }
 
-            logger?.Log($"Data type {typeof(T)} not recognized.");
+            Helper.LogError(logger, "Data type not recognized", [typeof(T)]);
             return string.Empty;
         }
     }

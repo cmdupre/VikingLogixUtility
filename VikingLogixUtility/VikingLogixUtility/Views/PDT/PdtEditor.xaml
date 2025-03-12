@@ -19,6 +19,8 @@
             <ProgressBar
                 Grid.Row="0"
                 Height="10px"
+                Foreground="#EC7D25"
+                Background="#878787"
                 Visibility="{Binding ProgressBarVisibility}"
                 Value="{Binding ProgressBarValue}"
                 Maximum="{Binding ProgressBarMaximum}"

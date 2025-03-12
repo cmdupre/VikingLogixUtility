@@ -1,4 +1,5 @@
 ﻿using libplctag.NativeImport;
+using VikingLibPlcTagNet.Common;
 using VikingLibPlcTagNet.Interfaces;
 using VikingLibPlcTagNet.Settings;
 
@@ -25,7 +26,7 @@ namespace VikingLibPlcTagNet.Tags
 
             if (id < 0)
             {
-                logger?.Log($"{plctag.plc_tag_decode_error(id)} ({name})");
+                Helper.LogError(logger, "Error creating tag", [name], id);
                 return null;
             }
 
@@ -33,7 +34,7 @@ namespace VikingLibPlcTagNet.Tags
 
             if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
             {
-                logger?.Log(plctag.plc_tag_decode_error(result));
+                Helper.LogError(logger, "Error reading tag", [name], result);
                 return null;
             }
 

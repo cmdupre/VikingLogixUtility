@@ -15,7 +15,7 @@ namespace VikingLibPlcTagNet.Tags
 
             if (tag is TagReadonly)
             {
-                logger?.Log($"Unknown data type {type} for tag {fqn}.");
+                Helper.LogError(logger, "Unknown data type for tag", [type, fqn]);
                 return null;
             }
 
@@ -38,8 +38,9 @@ namespace VikingLibPlcTagNet.Tags
                 DataTypes.REAL => Tag<float>.Create(path, fqn, logger),
                 DataTypes.LREAL => Tag<double>.Create(path, fqn, logger),
                 DataTypes.TIME => Tag<DateTime>.Create(path, fqn, logger),
-                // TODO: allow strings.
-                //DataTypes.STRING => Tag<string>.Create(path, fqn, logger),
+                DataTypes.STRING => Tag<string>.Create(path, fqn, logger),
+                DataTypes.STRINGE => Tag<string>.Create(path, fqn, logger),
+                DataTypes.CHAR => Tag<char>.Create(path, fqn, logger),
                 _ => TagReadonly.Create(path, fqn, logger)
             };
         }

@@ -30,7 +30,7 @@ namespace VikingLogixUtility.Views.PDT
             if (DataContext is not TagEditorViewModel vm)
                 return;
 
-            vm.FilterTags();
+            vm.FilterGridTable();
         }
     }
 }

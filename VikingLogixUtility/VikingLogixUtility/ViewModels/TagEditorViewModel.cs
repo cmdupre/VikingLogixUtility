@@ -149,7 +149,7 @@ namespace VikingLogixUtility.ViewModels
 
         public string FilterText
         {
-            get => filterText;
+            get => filterText.SanitizeFilterText();
 
             set
             {
@@ -307,7 +307,7 @@ namespace VikingLogixUtility.ViewModels
                     logger.Log("Writing tags...");
                     WriteTagsBackground();
                     logger.Log("Loading tag editor...");
-                    LoadTagEditorBackground(FilterText);
+                    LoadTagEditorBackground();
                 }
                 catch (Exception ex)
                 {
@@ -332,7 +332,7 @@ namespace VikingLogixUtility.ViewModels
             foreach (var udt in PlcInfo.GetTemplateNamesFor(ScopeSelectedItem.Name))
                 UdtItems.Add(new DisplayStringViewModel(udt));
 
-            UdtItems = UdtItems.Sort();
+            UdtItems = [.. UdtItems.OrderBy(x => x)];
         }
 
         public void LoadParameters()
@@ -348,10 +348,11 @@ namespace VikingLogixUtility.ViewModels
             foreach (var parameter in PlcInfo.GetFieldNamesFor(ScopeSelectedItem.Name, UdtSelectedItem.Name))
                 ParameterItems.Add(new DisplayStringViewModel(parameter));
 
-            ParameterItems = ParameterItems.Sort();
+            ParameterItems = [.. ParameterItems.OrderBy(x => x)];
         }
 
-        public void FilterTags() => TagEditorGridTable.Filter(FilterText);
+        public void FilterGridTable() =>
+            TagEditorGridTable.Filter(FilterText);
 
         private void LoadScopesBackground()
         {
@@ -390,13 +391,8 @@ namespace VikingLogixUtility.ViewModels
             return false;
         }
 
-        public void ClearTagEditor()
-        {
-            FilterText = string.Empty;
-
-            App.Current.Dispatcher.Invoke(() =>
-                TagEditorGridTable.Clear());
-        }
+        public void ClearTagEditor() =>
+            App.Current.Dispatcher.Invoke(TagEditorGridTable.Clear);
 
         public void ExportTags()
         {
@@ -424,17 +420,9 @@ namespace VikingLogixUtility.ViewModels
             IsRunning = false;
         }
 
-        private void LoadTagEditorBackground(string? filterText = null)
+        private void LoadTagEditorBackground()
         {
             tagProcessor.Read(this);
-
-            if (filterText is not null)
-            {
-                FilterText = filterText;
-
-                App.Current.Dispatcher.Invoke(() =>
-                    TagEditorGridTable.Filter(FilterText));
-            }
         }
 
         private void WriteTagsBackground()

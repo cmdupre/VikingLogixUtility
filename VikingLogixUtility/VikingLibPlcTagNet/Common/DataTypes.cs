@@ -14,6 +14,7 @@
         REAL = 0xCA,
         LREAL = 0xCB,
         STRING = 0x8FCE,
+        STRINGE = 0x0FCE,
         TIME = 0xD7,
         //LTIME = 0xDF,
         //STIME = 0xCC,
@@ -33,5 +34,7 @@
         //EPATH = 0xDC,
         //ENGUNIT = 0xDD,
         //STRINGI = 0xDE
+        // Special for this application to read strings
+        CHAR = -0x01
     }
 }

@@ -12,13 +12,16 @@ namespace VikingLogixUtility.Processors
                 vm.ScopeSelectedItem is null)
                 return;
 
-            vm.ClearTagEditor();
+            App.Current.Dispatcher.Invoke(vm.ClearTagEditor);
 
-            var tagNames = vm.PlcInfo.GetTagNamesFor(vm.ScopeSelectedItem.Name);
+            var tagNames = vm.PlcInfo.GetTagNamesFor(vm.ScopeSelectedItem.Name, vm.FilterText);
 
-            vm.ProgressBarValue = 0;
-            vm.ProgressBarMaximum = tagNames.Count();
-            vm.ProgressBarVisibility = Visibility.Visible;
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                vm.ProgressBarValue = 0;
+                vm.ProgressBarMaximum = tagNames.Count();
+                vm.ProgressBarVisibility = Visibility.Visible;
+            });
 
             foreach (var tagName in tagNames)
             {

@@ -70,7 +70,7 @@ namespace VikingLibPlcTagNet.Data
                 if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
                 {
                     name = new StringBuilder("[ERROR]");
-                    logger?.Log(plctag.plc_tag_decode_error(result));
+                    Helper.LogError(logger, "Error reading tag name", [], result);
                 }
 
                 offset += plctag.plc_tag_get_string_total_length(tagListing.Id, offset);
@@ -87,53 +87,65 @@ namespace VikingLibPlcTagNet.Data
 
                 var tagInfo = TagInfo.Create(tagListing.Path, id, (DataTypes)type, elementLength, arrayDims, name);
 
-                if (tagInfo.Type == DataTypes.STRING)
-                {
-                    //todo allow strings
-                    //tagInfos.Add(tagInfo.WithNewName($"{name}.DATA"));
-                    continue;
-                }
-
                 if (tagInfo.NumberDimensions > 1)
                 {
-                    logger?.Log($"Skipping array of more than one dimension ({tagInfo.NumberDimensions}, {tagInfo.Name}).");
+                    Helper.LogError(logger, "Skipping array of more than one dimension", [tagInfo.NumberDimensions, tagInfo.Name]);
                     continue;
                 }
 
                 if (tagInfo.NumberDimensions == 1)
                 {
-                    // get element type
                     var arrayTagId = plctag.plc_tag_create(tagListing.Path.WithFqn(tagInfo.Name), tagListing.Path.Timeout);
-                    var buffer = new byte[2];
-                    plctag.plc_tag_get_byte_array_attribute(arrayTagId, "raw_tag_type_bytes", buffer, buffer.Length);
-                    plctag.plc_tag_destroy(arrayTagId);
 
-                    if (!Helper.TryGetDataType(buffer[0], out var arrayDataType))
+                    if (arrayTagId < 0)
                     {
-                        // this is probably an array of udt?
-                        // the specific example found  is FO_MessageList; an array of strings. Strings are structures of LEN and DATA.
-                        if (buffer[0] != 0)
-                            logger?.Log($"Skipping array of unknown element data type ({buffer[0]}, {tagInfo.Name})");
-
+                        Helper.LogError(logger, "Error reading array", [tagInfo.Name], arrayTagId);
                         continue;
                     }
 
-                    // save tags using array tag element length (count)
-                    for (var i = 0; i < elementLength; i++)
-                    {
-                        var elementName = $"{tagInfo.Name}[{i}]";
-                        var elementType = (DataTypes)buffer[0];
+                    var typeSize = plctag.plc_tag_get_int_attribute(arrayTagId, "raw_tag_type_bytes.length", -1);
 
-                        // this is BOOL array, stored in PLC as bits of DWORD
-                        if (arrayDataType == DataTypes.DWORD)
-                        {
-                            elementName = $"{tagInfo.Name}.{i}";
-                            elementType = DataTypes.BOOL;
-                        }
+                    if (typeSize != 2 && typeSize != 4)
+                    {
+                        Helper.LogError(logger, "Unexpected tag type size for array", [tagInfo.Name]);
+                        continue;
+                    }
+
+                    var buffer = new byte[typeSize];
+
+                    plctag.plc_tag_get_byte_array_attribute(arrayTagId, "raw_tag_type_bytes", buffer, buffer.Length);
+                    plctag.plc_tag_destroy(arrayTagId);
+
+                    // if 4, first two bytes don't appear to matter, getting 672 (0x2A0).
+                    var arrayTagType = buffer.Length == 2
+                        ? BitConverter.ToUInt16(buffer, 0)
+                        : BitConverter.ToUInt16([buffer[2], buffer[3]], 0);
+
+                    if (!Helper.TryGetDataType(arrayTagType, out var arrayTagDataType) ||
+                        arrayTagDataType is null)
+                    {
+                        Helper.LogError(logger, "Skipping array of unknown element data type", [arrayTagType, tagInfo.Name]);
+                        continue;
+                    }
+
+                    var elementCount = arrayDims[0];
+
+                    // this is BOOL array, stored in PLC as bits of DWORD
+                    if (arrayTagDataType == DataTypes.DWORD)
+                    {
+                        arrayTagDataType = DataTypes.BOOL;
+                        elementCount = 32;
+                    }
+
+                    for (var i = 0; i < elementCount; i++)
+                    {
+                        var elementName = arrayTagDataType == DataTypes.BOOL
+                            ? $"{tagInfo.Name}.{i}"
+                            : $"{tagInfo.Name}[{i}]";
 
                         tagInfos.Add(
                             TagInfo.Create(
-                                tagListing.Path, (uint)arrayTagId, elementType, 1, [], elementName));
+                                tagListing.Path, (uint)arrayTagId, (DataTypes)arrayTagDataType, 1, [], elementName));
                     }
 
                     continue;
@@ -175,7 +187,7 @@ namespace VikingLibPlcTagNet.Data
                 // Sanity check.
                 if (templateId != id)
                 {
-                    logger?.Log("ID mismatch while reading UDT information.");
+                    Helper.LogError(logger, "ID mismatch while reading UDT information.", [templateId, id]);
                     return null;
                 }
 
@@ -202,9 +214,12 @@ namespace VikingLibPlcTagNet.Data
 
                     var field = FieldInfo.Create(fieldMetadata, fieldType, fieldOffset);
 
-                    // TODO: Can't do this since we are enumerating templateIds.Distinct() here.
-                    //if (field.IsUdt)
-                    //    templateIds.Add(field.TemplateId);
+                    if (field.IsUdt)
+                    {
+                        // Can't do this since we are enumerating templateIds.Distinct() here.
+                        // ICS is okay with skipping these.
+                        // templateIds.Add(field.TemplateId);
+                    }
 
                     fields.Add(field);
                 }
@@ -225,7 +240,7 @@ namespace VikingLibPlcTagNet.Data
                 if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
                 {
                     name = new StringBuilder("[ERROR];");
-                    logger?.Log(plctag.plc_tag_decode_error(result));
+                    Helper.LogError(logger, "Error reading template name", [], result);
                 }
 
                 string udtName = name
@@ -246,7 +261,7 @@ namespace VikingLibPlcTagNet.Data
 
                     if (offset >= tagSize)
                     {
-                        logger?.Log("Refusing to read past tag size.");
+                        Helper.LogError(logger, "Refusing to read past tag size.", [offset, tagSize]);
                         break;
                     }
 
@@ -265,10 +280,11 @@ namespace VikingLibPlcTagNet.Data
                     if (result != (int)STATUS_CODES.PLCTAG_STATUS_OK)
                     {
                         name = new StringBuilder("[ERROR]");
-                        logger?.Log(plctag.plc_tag_decode_error(result));
+                        Helper.LogError(logger, "Error reading parameter name", [], result);
                     }
 
-                    if (!name.ToString().StartsWith("__"))
+                    // ICS is okay with skipping fields (parameters) that are UDTs.
+                    if (!field.IsUdt && !name.ToString().StartsWith("__"))
                         fieldsWithNames.Add(field.WithName(name));
 
                     offset += plctag.plc_tag_get_string_total_length(templateInfo.Id, offset);
@@ -343,7 +359,7 @@ namespace VikingLibPlcTagNet.Data
                 yield return field.Name;
         }
 
-        public IEnumerable<string> GetTagNamesFor(string programName, string templateName)
+        public IEnumerable<string> GetTagNamesFor(string programName, string templateName, string nameFilter)
         {
             var templateId = Templates
                 .Where(t => t.ProgramName == programName)
@@ -355,15 +371,17 @@ namespace VikingLibPlcTagNet.Data
                 .Where(t => t.IsUdt)
                 .Where(t => t.ProgramName == programName)
                 .Where(t => t.TemplateId == templateId)
-                .Select(t => t.Name);
+                .Select(t => t.Name)
+                .Where(n => n.Contains(nameFilter, StringComparison.InvariantCultureIgnoreCase));
         }
 
-        public IEnumerable<string> GetTagNamesFor(string programName)
+        public IEnumerable<string> GetTagNamesFor(string programName, string nameFilter)
         {
             return Tags
                 .Where(t => !t.IsUdt)
                 .Where(t => t.ProgramName == programName)
-                .Select(t => t.Name);
+                .Select(t => t.Name)
+                .Where(n => n.Contains(nameFilter, StringComparison.InvariantCultureIgnoreCase));
         }
 
         public ITag? GetTag(string programName, string tagName, string? templateName = null, string? parameterName = null, ILoggable? logger = null)
