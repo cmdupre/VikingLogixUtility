@@ -7,6 +7,7 @@ namespace VikingLogixUtility.Interfaces
     {
         bool IsRunning { get; }
         string Address { get; }
+        int Slot { get; }
         ObservableCollection<DisplayStringViewModel> ScopeItems { get; }
         void LoadScopes();
         void LoadTagEditor();

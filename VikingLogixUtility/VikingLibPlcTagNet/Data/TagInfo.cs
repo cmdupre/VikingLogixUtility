@@ -25,15 +25,11 @@ namespace VikingLibPlcTagNet.Data
             this.programName = programName;
         }
 
-        public static TagInfo Create(TagPath path, uint id, DataTypes type, ushort elementLength, uint[] arrayDims, string name)
-        {
-            return new TagInfo(path, id, type, elementLength, arrayDims, name);
-        }
+        public static TagInfo Create(TagPath path, uint id, DataTypes type, ushort elementLength, uint[] arrayDims, string name) =>
+            new(path, id, type, elementLength, arrayDims, name);
 
-        public static TagInfo Create(TagPath path, uint id, DataTypes type, ushort elementLength, uint[] arrayDims, StringBuilder name)
-        {
-            return Create(path, id, type, elementLength, arrayDims, name.ToString());
-        }
+        public static TagInfo Create(TagPath path, uint id, DataTypes type, ushort elementLength, uint[] arrayDims, StringBuilder name) =>
+            Create(path, id, type, elementLength, arrayDims, name.ToString());
 
         public TagInfo WithProgramName(string programName) =>
             new(Path, Id, Type, ElementLength, ArrayDims, Name, programName);

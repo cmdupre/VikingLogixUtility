@@ -21,11 +21,11 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderBy(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("A"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("B"));
-            });
+            }
         }
 
         [Test]
@@ -43,13 +43,13 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderBy(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("1"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("9"));
                 Assert.That(orderedRows[2].DisplayName, Is.EqualTo("10"));
                 Assert.That(orderedRows[3].DisplayName, Is.EqualTo("11"));
-            });
+            }
         }
 
         [Test]
@@ -69,7 +69,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderBy(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("Array[1]"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("Array[2]"));
@@ -77,7 +77,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 Assert.That(orderedRows[3].DisplayName, Is.EqualTo("SomeOtherArray[1]"));
                 Assert.That(orderedRows[4].DisplayName, Is.EqualTo("SomeOtherArray[2]"));
                 Assert.That(orderedRows[5].DisplayName, Is.EqualTo("ThisIsNotAnArray"));
-            });
+            }
         }
 
         [Test]
@@ -97,7 +97,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderByDescending(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("ThisIsNotAnArray"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("SomeOtherArray[2]"));
@@ -105,7 +105,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 Assert.That(orderedRows[3].DisplayName, Is.EqualTo("Array[10]"));
                 Assert.That(orderedRows[4].DisplayName, Is.EqualTo("Array[2]"));
                 Assert.That(orderedRows[5].DisplayName, Is.EqualTo("Array[1]"));
-            });
+            }
         }
 
         [Test]
@@ -122,12 +122,12 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderBy(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("Testing.1"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("Testing.2"));
                 Assert.That(orderedRows[2].DisplayName, Is.EqualTo("Testing.11"));
-            });
+            }
         }
 
         [Test]
@@ -147,7 +147,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 .OrderBy(x => x)
                 .ToList();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(orderedRows[0].DisplayName, Is.EqualTo("-1"));
                 Assert.That(orderedRows[1].DisplayName, Is.EqualTo("-0.123"));
@@ -155,7 +155,7 @@ namespace VikingLogixUtilityTests.ViewModels
                 Assert.That(orderedRows[3].DisplayName, Is.EqualTo("0"));
                 Assert.That(orderedRows[4].DisplayName, Is.EqualTo("0.9"));
                 Assert.That(orderedRows[5].DisplayName, Is.EqualTo("1"));
-            });
+            }
         }
 
         [Test]
@@ -165,11 +165,11 @@ namespace VikingLogixUtilityTests.ViewModels
 
             var value = new DisplayStringViewModel(testValue);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(value.Name, Is.EqualTo(string.Empty));
                 Assert.That(value.DisplayName, Is.EqualTo(testValue));
-            });
+            }
         }
     }
 }

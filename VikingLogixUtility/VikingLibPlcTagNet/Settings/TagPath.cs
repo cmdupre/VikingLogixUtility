@@ -7,24 +7,26 @@
     /// </summary>
     /// <param name="gateway"></param>
     /// <param name="timeout"></param>
-    public sealed class TagPath(string gateway, int timeout = 9999)
+    public sealed class TagPath(string gateway, int slot, int timeout = 9999)
     {
-        public int Timeout => timeout;
-
-        public string Gateway => gateway;
-
         public static string Protocol => "ab-eip";
-
-        public static string Path => "1,0";
 
         public static string PLC => "controllogix";
 
+        public int Timeout => timeout;
+
+        public int Slot => slot;
+
+        public string Path => $"1,{Slot}";
+
+        public string Gateway => gateway;
+
         /// <summary>
-        /// Fully Qualified Name
+        /// Get attribute/connection string for a fully qualified name (tag).
         /// </summary>
         /// <param name="fqn"></param>
         /// <returns></returns>
-        public string WithFqn(string fqn) =>
+        public string GetAttributeString(string fqn) =>
             $"protocol={Protocol}&gateway={Gateway}&path={Path}&plc={PLC}&name={fqn}";
     }
 }

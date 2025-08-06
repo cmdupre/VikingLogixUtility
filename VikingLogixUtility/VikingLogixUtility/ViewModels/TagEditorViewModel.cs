@@ -33,11 +33,13 @@ namespace VikingLogixUtility.ViewModels
         private bool cancelRequested = false;
         private int progressBarValue = 0;
         private int progressBarMaximum = 100;
+        private int slot = 0;
         private string address = string.Empty;
         private string filterText = string.Empty;
         private ObservableCollection<DisplayStringViewModel> scopeItems = [];
         private ObservableCollection<DisplayStringViewModel> udtItems = [];
         private ObservableCollection<DisplayStringViewModel> parameterItems = [];
+        private ObservableCollection<int> slotOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
         private DisplayStringViewModel? scopeSelectedItem = null;
         private DisplayStringViewModel? udtSelectedItem = null;
         private PlcInfo? plcInfo = null;
@@ -147,6 +149,17 @@ namespace VikingLogixUtility.ViewModels
             }
         }
 
+        public ObservableCollection<int> SlotOptions
+        {
+            get => slotOptions;
+
+            set
+            {
+                slotOptions = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         public string FilterText
         {
             get => filterText.SanitizeFilterText();
@@ -171,6 +184,17 @@ namespace VikingLogixUtility.ViewModels
             set
             {
                 address = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public int Slot
+        {
+            get => slot;
+
+            set
+            {
+                slot = value;
                 NotifyPropertyChanged();
             }
         }
@@ -241,6 +265,7 @@ namespace VikingLogixUtility.ViewModels
             if (IsRunning)
                 return;
 
+            CancelRequested = false;
             IsRunning = true;
 
             logger.Log("Loading PLC data...");
@@ -356,7 +381,7 @@ namespace VikingLogixUtility.ViewModels
 
         private void LoadScopesBackground()
         {
-            using var listing = TagListing.Create(new TagPath(Address), logger);
+            using var listing = TagListing.Create(new TagPath(Address, Slot), logger);
 
             if (listing is null)
                 return;
@@ -404,7 +429,10 @@ namespace VikingLogixUtility.ViewModels
             var sfd = TagEditorExporter.GetSaveFileDialog();
 
             if (!sfd.ShowDialog() ?? false)
+            {
+                IsRunning = false;
                 return;
+            }
 
             try
             {
@@ -422,6 +450,7 @@ namespace VikingLogixUtility.ViewModels
 
         private void LoadTagEditorBackground()
         {
+            CancelRequested = false;
             tagProcessor.Read(this);
         }
 

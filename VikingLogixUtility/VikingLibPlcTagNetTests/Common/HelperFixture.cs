@@ -11,11 +11,11 @@ namespace VikingLibPlcTagNetTests.Common
         {
             var result = Helper.TryGetDataType(value, out var type);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(result, Is.EqualTo(expectedResult));
                 Assert.That(type, Is.EqualTo(expectedType));
-            });
+            }
         }
     }
 }

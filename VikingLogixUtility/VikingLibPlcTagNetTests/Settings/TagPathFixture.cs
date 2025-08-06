@@ -6,15 +6,15 @@ namespace VikingLibPlcTagNetTests.Settings
     internal class TagPathFixture
     {
         [Test]
-        public void TestWithFqn()
+        public void CreatesObjectAndReturnsAttributeString()
         {
             var gateway = "10.1.1.20";
 
-            TagPath tp = new(gateway);
+            TagPath tp = new(gateway, 2);
 
             var fqn = "Fully Qualified Tag Name";
 
-            Assert.That(tp.WithFqn(fqn), Is.EqualTo($"protocol=ab-eip&gateway={gateway}&path=1,0&plc=controllogix&name={fqn}"));
+            Assert.That(tp.GetAttributeString(fqn), Is.EqualTo($"protocol=ab-eip&gateway={gateway}&path=1,2&plc=controllogix&name={fqn}"));
         }
     }
 }

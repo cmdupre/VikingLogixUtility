@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace VikingLogixUtility.Models
 {
-    internal sealed class Settings(string address)
+    internal sealed class Settings(string address, int slot)
     {
         private static readonly string Filename = Assembly
             .GetExecutingAssembly()
@@ -12,7 +12,7 @@ namespace VikingLogixUtility.Models
             .Replace(".dll", ".json");
 
         private static Settings Default =>
-            new(string.Empty);
+            new(string.Empty, 0);
 
         public static Settings Load(string? filename = null)
         {
@@ -38,5 +38,7 @@ namespace VikingLogixUtility.Models
         }
 
         public string Address => address;
+
+        public int Slot => slot;
     }
 }

@@ -95,7 +95,7 @@ namespace VikingLibPlcTagNet.Data
 
                 if (tagInfo.NumberDimensions == 1)
                 {
-                    var arrayTagId = plctag.plc_tag_create(tagListing.Path.WithFqn(tagInfo.Name), tagListing.Path.Timeout);
+                    var arrayTagId = plctag.plc_tag_create(tagListing.Path.GetAttributeString(tagInfo.Name), tagListing.Path.Timeout);
 
                     if (arrayTagId < 0)
                     {

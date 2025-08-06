@@ -22,5 +22,15 @@ namespace VikingLogixUtility.Views.PDT
 
             vm.ScopeItems.Clear();
         }
+
+        private void Slot_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+
+            if (DataContext is not TagEditorViewModel vm)
+                return;
+
+            vm.ScopeItems.Clear();
+        }
     }
 }

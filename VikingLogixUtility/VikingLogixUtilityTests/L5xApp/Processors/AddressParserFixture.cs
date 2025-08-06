@@ -123,11 +123,11 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             string address = "test";
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.DoesNotThrow(() => address = AddressParser.GetAddress(_vm, mapping, tag));
                 Assert.That(address, Is.EqualTo(expected));
-            });
+            }
         }
 
         [TestCase("[MOV(RACK_41:4:I.Ch10.Data,AIT20100A_IN),OTU(AIT20100A.LLEnable)OTU(AIT20100A.LEnable)OTL(AIT20100A.HEnable)OTL(AIT20100A.HHEnable),OTU(AIT20100A.LLBypEn)OTL(AIT20100A.HHBypEn)OTL(AIT20100A.OOSEn),OTL(AIT20100A.ScaleEn)AI_Alm(AIT20100A,AIT20100A_IN,Globals)]",
@@ -146,11 +146,11 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             string address = "test";
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.Throws<NotImplementedException>(() => address = AddressParser.GetAddress(_vm, mapping, tag));
                 Assert.That(address, Is.EqualTo("test"));
-            });
+            }
         }
     }
 }

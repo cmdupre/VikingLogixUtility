@@ -10,7 +10,7 @@ namespace VikingLibPlcTagNetTests.Data
         public void TestWithProgramName()
         {
             var templateInfo = TemplateInfo.Create(
-                new TagPath(string.Empty),
+                new TagPath(string.Empty, 0),
                 string.Empty,
                 0, 0, 0, 0, 0, 0, 0,
                 Array.Empty<FieldInfo>());

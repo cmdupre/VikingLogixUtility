@@ -13,11 +13,11 @@ namespace VikingLogixUtilityTests.L5xApp.Extensions
 
             var mapping = content.GetMappingRungs();
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(mapping.Count(), Is.EqualTo(166));
                 Assert.That(mapping.First(), Is.EqualTo("XIC(Local:1:I.Pt00.Data)OTE(PSH_201A);"));
-            });
+            }
         }
     }
 }

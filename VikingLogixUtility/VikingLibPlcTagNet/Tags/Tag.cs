@@ -30,7 +30,7 @@ namespace VikingLibPlcTagNet.Tags
 
         internal static Tag<T>? Create(TagPath path, string fqn, ILoggable? logger = null)
         {
-            var id = plctag.plc_tag_create(path.WithFqn(fqn), path.Timeout);
+            var id = plctag.plc_tag_create(path.GetAttributeString(fqn), path.Timeout);
 
             if (id < 0)
             {

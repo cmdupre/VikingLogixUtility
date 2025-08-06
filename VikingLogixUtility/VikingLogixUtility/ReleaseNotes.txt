@@ -6,6 +6,11 @@ Initial Release: 1/9/2025
 
 *******************************************************************************
 
+Version 1.5.0, 1/9/2026, C.Dupre
+- Add UI controls and settings to specify slot when connecting to ControlLogix PLCs.
+- Bug fix, UI not responsive when cancelling tag editor export.
+- Bug fix, reset cancel request before calling long running function.
+
 Version 1.4.0, 3/17/2025, C. Dupre
 - Implement strings read/write.
 - Implement array of strings read/write.

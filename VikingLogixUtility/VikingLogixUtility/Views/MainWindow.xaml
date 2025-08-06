@@ -7,6 +7,8 @@
         xmlns:localUdt="clr-namespace:VikingLogixUtility.Views.UDT"
         xmlns:localPdt="clr-namespace:VikingLogixUtility.Views.PDT"
         xmlns:localL5xTagExport="clr-namespace:VikingLogixUtility.L5xApp.Views"
+        xmlns:vm="clr-namespace:VikingLogixUtility.ViewModels"
+        d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
         Closing="Window_Closing"
         mc:Ignorable="d"
         Height="750" Width="900">

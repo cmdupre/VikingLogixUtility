@@ -4,6 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:VikingLogixUtility.Views.UDT"
+             xmlns:vm="clr-namespace:VikingLogixUtility.ViewModels"
+             d:DataContext="{d:DesignInstance Type=vm:TagEditorViewModel}"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
@@ -26,6 +28,18 @@
                 TextChanged="Address_TextChanged"
                 IsEnabled="{Binding IsNotRunning}"
                 Text="{Binding Address, UpdateSourceTrigger=PropertyChanged}"/>
+            <Label
+                VerticalContentAlignment="Center"
+                Content="Slot:"/>
+            <ComboBox
+                VerticalContentAlignment="Center"
+                Width="50px"
+                Height="25px"
+                Margin="0, 0, 10px, 0"
+                SelectionChanged="Slot_SelectionChanged"
+                IsEnabled="{Binding IsNotRunning}"
+                ItemsSource="{Binding SlotOptions}"
+                SelectedItem="{Binding Slot, Mode=TwoWay}"/>
             <Button 
                 Content="Read"
                 Command="{Binding ReadClicked}"

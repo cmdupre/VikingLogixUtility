@@ -22,7 +22,7 @@ namespace VikingLibPlcTagNet.Tags
 
         internal static TagReadonly? Create(TagPath path, string name, ILoggable? logger = null)
         {
-            var id = plctag.plc_tag_create(path.WithFqn(name), path.Timeout);
+            var id = plctag.plc_tag_create(path.GetAttributeString(name), path.Timeout);
 
             if (id < 0)
             {

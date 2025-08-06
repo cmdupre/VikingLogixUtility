@@ -18,7 +18,7 @@ namespace VikingLogixUtility.Commands
         {
             if (viewModel.ScopeItems.Count < 1)
             {
-                var settings = new Settings(viewModel.Address);
+                var settings = new Settings(viewModel.Address, viewModel.Slot);
 
                 settings.Write();
 

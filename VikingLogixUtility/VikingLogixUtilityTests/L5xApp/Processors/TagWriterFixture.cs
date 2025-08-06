@@ -21,7 +21,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(et.Rows, Has.Count.EqualTo(7857));
 
@@ -44,7 +44,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
                 Assert.That(et.Rows[249]["Description"], Is.EqualTo("RDS-1 Run Command"));
                 Assert.That(et.Rows[249]["Value"], Is.EqualTo("0"));
                 Assert.That(et.Rows[249]["Address"], Is.EqualTo(string.Empty));
-            });
+            }
         }
 
         [Test]
@@ -59,7 +59,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(et.Rows, Has.Count.EqualTo(455));
 
@@ -70,7 +70,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
                 Assert.That(et.Rows[120]["Description"], Is.EqualTo("Effluent Water System Water Low\n"));
                 Assert.That(et.Rows[120]["Value"], Is.EqualTo("0"));
                 Assert.That(et.Rows[120]["Address"], Is.EqualTo("Local:6:I.Pt06.Data"));
-            });
+            }
         }
 
         [Test]
@@ -82,7 +82,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(et.Rows, Has.Count.EqualTo(4));
 
@@ -95,7 +95,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
                 Assert.That(et.Rows[0]["Description"], Is.EqualTo(string.Empty));
                 Assert.That(et.Rows[0]["Value"], Is.EqualTo(string.Empty));
                 Assert.That(et.Rows[0]["Address"], Is.EqualTo("Local:1:I.Pt01.Data"));
-            });
+            }
         }
 
         [Test]
@@ -107,14 +107,14 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(et.Rows, Has.Count.EqualTo(32));
 
                 Assert.That(et.Rows[0].AsString(), Is.EqualTo("Testing,OneShot.[0],Base,,BOOL,BOOL,,0,"));
                 Assert.That(et.Rows[1].AsString(), Is.EqualTo("Testing,OneShot.[1],Base,,BOOL,BOOL,Comment1,0,"));
                 Assert.That(et.Rows[3].AsString(), Is.EqualTo("Testing,OneShot.[3],Base,,BOOL,BOOL,Comment3,0,"));
-            });
+            }
         }
 
         [Test]
@@ -126,7 +126,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
 
             TagWriter.Geaux(vm, et, content.GetMappingRungs(), content.Controller.Name, content.Tags);
 
-            Assert.Multiple(() =>
+            using (Assert.EnterMultipleScope())
             {
                 Assert.That(et.Rows, Has.Count.EqualTo(34));
 
@@ -138,7 +138,7 @@ namespace VikingLogixUtilityTests.L5xApp.Processors
                 Assert.That(et.Rows[5].AsString(), Is.EqualTo("Testing,OneShot.[4],Base,,INT,INT,,0,"));
                 Assert.That(et.Rows[6].AsString(), Is.EqualTo("Testing,OneShot.[5],Base,,INT,INT,,0,"));
                 Assert.That(et.Rows[7].AsString(), Is.EqualTo("Testing,OneShot.[5].1,Base,,INT,INT,Comment5.1,0,"));
-            });
+            }
         }
 
         private class FakeViewModel : ITagExportViewModel

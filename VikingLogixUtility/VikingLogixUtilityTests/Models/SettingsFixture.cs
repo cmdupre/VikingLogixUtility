@@ -6,21 +6,27 @@ namespace VikingLogixUtilityTests.Models
     internal class SettingsFixture
     {
         [Test]
-        public void TestLoadDefault()
+        public void LoadsCorrectDefaults()
         {
             var settings = Settings.Load();
 
-            Assert.That(settings.Address, Is.Empty);
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(settings.Address, Is.Empty);
+                Assert.That(settings.Slot, Is.Zero);
+            }
         }
 
         [Test]
-        public void TestCanSave()
+        public void SavesSettings()
         {
             var filename = Path.GetTempFileName();
 
             var address = "testAddress";
 
-            var settings = new Settings(address);
+            var slot = 2;
+
+            var settings = new Settings(address, slot);
 
             settings.Write(filename);
 
@@ -28,7 +34,11 @@ namespace VikingLogixUtilityTests.Models
 
             File.Delete(filename);
 
-            Assert.That(settings2.Address, Is.EqualTo(address));
+            using (Assert.EnterMultipleScope())
+            {
+                Assert.That(settings2.Address, Is.EqualTo(address));
+                Assert.That(settings2.Slot, Is.EqualTo(slot));
+            }
         }
     }
 }
