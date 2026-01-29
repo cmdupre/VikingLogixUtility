@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Text;
+using VikingLibPlcTagNet.Common;
 using VikingLogixUtility.Common;
 
 namespace VikingLogixUtility.Extensions
@@ -40,10 +41,19 @@ namespace VikingLogixUtility.Extensions
                     (c >= 'a' && c <= 'z') ||
                     (c >= '0' && c <= '9') ||
                     (c == '-') ||
-                    (c == '_'))
+                    (c == '_') ||
+                    (c == '[') ||
+                    (c == ']'))
                     sb.Append(c);
 
             return sb.ToString();
+        }
+
+        public static DataTypes? ToDataType(this string s)
+        {
+            return Enum.TryParse<DataTypes>(s, out var dataType)
+                ? dataType
+                : null;
         }
     }
 }

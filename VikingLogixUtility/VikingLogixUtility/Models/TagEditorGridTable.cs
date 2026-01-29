@@ -216,8 +216,21 @@ namespace VikingLogixUtility.Models
             }
         }
 
-        public void Filter(string tagNameFilter) =>
-            RefreshGrid($"[{Constants.TagName}] LIKE '%{tagNameFilter}%'");
+        public void Filter(string tagNameFilter)
+        {
+            var sb = new StringBuilder();
+
+            // Allow array filtering.
+            foreach (var c in tagNameFilter)
+            {
+                if (c == '[' || c == ']')
+                    sb.Append('[').Append(c).Append(']');
+                else
+                    sb.Append(c);
+            }
+
+            RefreshGrid($"[{Constants.TagName}] LIKE '%{sb}%'");
+        }
 
         /// <summary>
         /// Gets the filtered view table for export.

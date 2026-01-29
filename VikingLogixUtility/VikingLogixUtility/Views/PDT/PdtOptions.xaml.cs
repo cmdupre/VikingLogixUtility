@@ -32,5 +32,15 @@ namespace VikingLogixUtility.Views.PDT
 
             vm.FilterGridTable();
         }
+
+        private void ListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            e.Handled = true;
+
+            if (DataContext is not TagEditorViewModel vm)
+                return;
+
+            vm.TagEditorGridTable.Clear();
+        }
     }
 }

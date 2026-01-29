@@ -1,3 +1,4 @@
+using VikingLibPlcTagNet.Common;
 using VikingLogixUtility.Extensions;
 
 namespace VikingLogixUtilityTests.Extensions
@@ -22,7 +23,18 @@ namespace VikingLogixUtilityTests.Extensions
         [TestCase(" T ESTING", "TESTING")]
         [TestCase(@"`~!@#$%^&*()_=-+,<.>/?|\;:'", "_-")]
         [TestCase(" 0 a B ", "0aB")]
-        public void GetSanitizedFilterText(string input, string expected) =>
+        [TestCase("[123]", "[123]")]
+        public void GetsSanitizedFilterText(string input, string expected) =>
             Assert.That(input.SanitizeFilterText(), Is.EqualTo(expected));
+
+        [TestCase("BOOL", DataTypes.BOOL)]
+        [TestCase("DINT", DataTypes.DINT)]
+        [TestCase("REAL", DataTypes.REAL)]
+        [TestCase("STRING", DataTypes.STRING)]
+        [TestCase("STRINGE", DataTypes.STRINGE)]
+        [TestCase("[All]", null)]
+        [TestCase("", null)]
+        public void GetsDataTypeEnumFromString(string input, DataTypes? expected) =>
+            Assert.That(input.ToDataType(), Is.EqualTo(expected));
     }
 }

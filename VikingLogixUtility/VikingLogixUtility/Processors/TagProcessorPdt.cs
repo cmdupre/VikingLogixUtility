@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using VikingLogixUtility.Extensions;
 using VikingLogixUtility.Interfaces;
 using VikingLogixUtility.ViewModels;
 
@@ -14,7 +15,7 @@ namespace VikingLogixUtility.Processors
 
             App.Current.Dispatcher.Invoke(vm.ClearTagEditor);
 
-            var tagNames = vm.PlcInfo.GetTagNamesFor(vm.ScopeSelectedItem.Name, vm.FilterText);
+            var tagNames = vm.PlcInfo.GetTagNamesFor(vm.ScopeSelectedItem.Name, vm.FilterText, vm.DataTypesSelectedItem.ToDataType());
 
             App.Current.Dispatcher.Invoke(() =>
             {

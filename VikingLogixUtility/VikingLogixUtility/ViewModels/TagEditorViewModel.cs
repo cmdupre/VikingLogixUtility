@@ -36,9 +36,11 @@ namespace VikingLogixUtility.ViewModels
         private int slot = 0;
         private string address = string.Empty;
         private string filterText = string.Empty;
+        private string dataTypesSelectedItem = string.Empty;
         private ObservableCollection<DisplayStringViewModel> scopeItems = [];
         private ObservableCollection<DisplayStringViewModel> udtItems = [];
         private ObservableCollection<DisplayStringViewModel> parameterItems = [];
+        private ObservableCollection<string> dataTypesItemsSource = [Constants.All, "BOOL", "SINT", "INT", "DINT", "LINT", "USINT", "UINT", "UDINT", "ULINT", "REAL", "LREAL", "STRING", "STRINGE"];
         private ObservableCollection<int> slotOptions = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16];
         private DisplayStringViewModel? scopeSelectedItem = null;
         private DisplayStringViewModel? udtSelectedItem = null;
@@ -107,6 +109,28 @@ namespace VikingLogixUtility.ViewModels
             set
             {
                 parameterItems = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> DataTypesItemsSource
+        {
+            get => dataTypesItemsSource;
+
+            set
+            {
+                dataTypesItemsSource = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        public string DataTypesSelectedItem
+        {
+            get => dataTypesSelectedItem;
+
+            set
+            {
+                dataTypesSelectedItem = value;
                 NotifyPropertyChanged();
             }
         }
@@ -477,6 +501,10 @@ namespace VikingLogixUtility.ViewModels
 
                     if (string.IsNullOrWhiteSpace(writeValue))
                         continue;
+
+                    // Keyword to clear a string.
+                    if (writeValue == "DELETE")
+                        writeValue = "";
 
                     tagProcessor.Write(this, tagName, columnName, writeValue);
                 }

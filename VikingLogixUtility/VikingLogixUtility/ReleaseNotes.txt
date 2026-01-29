@@ -6,7 +6,16 @@ Initial Release: 1/9/2025
 
 *******************************************************************************
 
-Version 1.5.0, 1/9/2026, C.Dupre
+Version 1.6.0, 9/3/2026, C. Dupre
+- Moved VikingLibPlcTagNet into a separate solution and created local Nuget package.
+- Imported into VikingLogixUtility.
+- Changed list box selection color to orange to match the progress bar.
+- Allow clearing of string with the "DELETE" keyword.
+- Allow array notation in tag filtering.
+- Add data types filter for PDT tags.
+- Update VikingLibPlcTagNet to v1.6.2.
+
+Version 1.5.0, 1/9/2026, C. Dupre
 - Add UI controls and settings to specify slot when connecting to ControlLogix PLCs.
 - Bug fix, UI not responsive when cancelling tag editor export.
 - Bug fix, reset cancel request before calling long running function.

@@ -24,6 +24,7 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <GroupBox
             Grid.Row="0"
@@ -44,9 +45,20 @@
             </ListBox>
         </GroupBox>
         <GroupBox
+            Grid.Row="0"
+            Grid.Column="1"
+            Header="Data Type">
+            <ListBox
+                ItemsSource="{Binding DataTypesItemsSource, Mode=OneWay}"
+                SelectedItem="{Binding DataTypesSelectedItem}"
+                IsEnabled="{Binding IsNotRunning}"
+                SelectionChanged="ListBox_SelectionChanged"/>
+        </GroupBox>
+        <GroupBox
             Header="Tag Name Filter"
             Grid.Row="1"
-            Grid.Column="0">
+            Grid.Column="0"
+            Grid.ColumnSpan="2">
             <TextBox
                 HorizontalAlignment="Left"
                 Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}"
