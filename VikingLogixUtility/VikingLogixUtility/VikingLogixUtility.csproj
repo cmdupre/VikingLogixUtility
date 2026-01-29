@@ -20,10 +20,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.105.0" />
     <PackageReference Include="L5Sharp" Version="5.3.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\VikingLibPlcTagNet\VikingLibPlcTagNet.csproj" />
+    <PackageReference Include="VikingLibPlcTagNet" Version="1.5.0" />
   </ItemGroup>
 
 	<ItemGroup>
